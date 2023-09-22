@@ -1,4 +1,5 @@
-import { Button, Checkbox, Form, Input, Divider } from "antd";
+import { Button, Form, Input, Divider } from "antd";
+import { useState } from "react";
 
 function RegisterPage() {
     const [form] = Form.useForm();
@@ -14,12 +15,10 @@ function RegisterPage() {
             <Form
                 form={form}
                 name="basic"
-                labelCol={{ span: 8 }}
-                wrapperCol={{ span: 16 }}
-                style={{ maxWidth: 600 }}
-                initialValues={{ remember: true }}
                 onFinish={onFinish}
                 autoComplete="off"
+                layout="vertical"
+                style={{ maxWidth: 600, margin: '0 auto' }}
             >
                 <Form.Item
                     label="Full Name"
@@ -72,9 +71,9 @@ function RegisterPage() {
                 >
                     <Input />
                 </Form.Item>
-                <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                    <Button type="primary" htmlType="submit">
-                        Submit
+                <Form.Item style={{ textAlign: 'center' }}>
+                    <Button type="primary" loading={true}>
+                        Sign Up
                     </Button>
                 </Form.Item>
             </Form>
