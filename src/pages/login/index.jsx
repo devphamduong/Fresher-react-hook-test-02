@@ -4,18 +4,22 @@ import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import './LoginPage.scss';
 import { login } from "../../services/api";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { loginAction } from "../../redux/account/accountSlice";
 
 function LoginPage() {
     const navigate = useNavigate();
     const [form] = Form.useForm();
     const [isSubmit, setIsSubmit] = useState(false);
+    const dispatch = useDispatch();
 
     const onFinish = async (values) => {
         setIsSubmit(true);
         let res = await login(values);
         setIsSubmit(false);
-        if (res && res.data && res.data.user) {
+        if (res && res.data) {
             localStorage.setItem('access_token', res.data.access_token);
+            dispatch(loginAction(res.data.user));
             message.success("Sign in successfully!");
             navigate('/');
         } else {

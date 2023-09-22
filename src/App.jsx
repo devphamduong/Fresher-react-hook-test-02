@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import ErrorPage from './pages/error-page';
 import LoginPage from './pages/login';
 import RegisterPage from './pages/register';
@@ -11,8 +11,24 @@ import {
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Home from './components/Home';
+import { getAccount } from './services/api';
+import { useDispatch } from 'react-redux';
+import { getAccountAction } from './redux/account/accountSlice';
 
 const Layout = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    fetchAccount();
+  }, []);
+
+  const fetchAccount = async () => {
+    let res = await getAccount();
+    if (res && res.data) {
+      dispatch(getAccountAction(res.data.user));
+    }
+  };
+
   return (
     <div className='layout-app'>
       <Header />
