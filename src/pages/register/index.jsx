@@ -96,7 +96,7 @@ function RegisterPage() {
                     <Divider>Or</Divider>
                     <p>Already have an account?
                         <span>
-                            <Link to={'/login'}> Log In</Link>
+                            <Link to={'/login'}> Sign In</Link>
                         </span>
                     </p>
                 </Form>

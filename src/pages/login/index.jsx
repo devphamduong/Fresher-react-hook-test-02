@@ -1,14 +1,30 @@
-import { Button, Form, Input, Divider, notification } from "antd";
+import { Button, Form, Input, Divider, notification, message } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import './LoginPage.scss';
+import { login } from "../../services/api";
+import { useState } from "react";
 
 function LoginPage() {
     const navigate = useNavigate();
     const [form] = Form.useForm();
+    const [isSubmit, setIsSubmit] = useState(false);
 
     const onFinish = async (values) => {
-        console.log('Received values of form: ', values);
+        setIsSubmit(true);
+        let res = await login(values);
+        setIsSubmit(false);
+        if (res && res.data && res.data.user) {
+            localStorage.setItem('access_token', res.data.access_token);
+            message.success("Sign in successfully!");
+            navigate('/');
+        } else {
+            notification.error({
+                message: 'An error occurred',
+                description: res.message && res.message.length > 0 && res.message,
+                duration: 5
+            });
+        }
     };
 
     return (
@@ -25,7 +41,7 @@ function LoginPage() {
                 >
                     <Form.Item
                         label="Email"
-                        name="email"
+                        name="username"
                         rules={[{ required: true, message: 'Please input your email!' }, { type: 'email', message: 'Your email is not valid!' }]}
                     >
                         <Input prefix={<UserOutlined className="site-form-item-icon" />} />
@@ -38,7 +54,7 @@ function LoginPage() {
                         <Input.Password prefix={<LockOutlined className="site-form-item-icon" />} />
                     </Form.Item>
                     <Form.Item style={{ textAlign: 'center' }}>
-                        <Button type="primary" htmlType="submit">
+                        <Button type="primary" htmlType="submit" loading={isSubmit}>
                             Sign In
                         </Button>
                     </Form.Item>
