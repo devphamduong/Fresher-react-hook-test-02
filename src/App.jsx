@@ -28,6 +28,20 @@ const Layout = () => {
   );
 };
 
+const LayoutAdmin = () => {
+  const isAdminRoute = window.location.pathname.startsWith('/admin');
+  const user = useSelector(state => state.account.user);
+  const userRole = user.role;
+
+  return (
+    <div className='layout-app'>
+      {isAdminRoute && userRole === 'ADMIN' && <Header />}
+      <Outlet />
+      {isAdminRoute && userRole === 'ADMIN' && <Footer />}
+    </div>
+  );
+};
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -55,7 +69,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/admin",
-    element: <Layout />,
+    element: <LayoutAdmin />,
     errorElement: <ErrorPage />,
     children: [
       {
@@ -86,7 +100,7 @@ export default function App() {
   }, []);
 
   const fetchAccount = async () => {
-    if (window.location.pathname !== '/login') {
+    if (window.location.pathname !== '/login' || window.location.pathname !== '/register' || window.location.pathname !== '/') {
       let res = await getAccount();
       if (res && res.data) {
         dispatch(getAccountAction(res.data.user));
@@ -96,7 +110,7 @@ export default function App() {
 
   return (
     <>
-      {isAuthenticated || window.location.pathname !== '/login'
+      {isAuthenticated || window.location.pathname === '/login' || window.location.pathname === '/register' || window.location.pathname === '/'
         ? <RouterProvider router={router} />
         : <Loading />}
     </>
