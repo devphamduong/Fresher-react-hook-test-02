@@ -1,8 +1,10 @@
+import './Footer.scss';
+
 function Footer() {
     return (
-        <>
-            footer
-        </>
+        <div className='footer-container'>
+            React Test Fresher ©2023 Created DuongPC
+        </div>
     );
 }
 

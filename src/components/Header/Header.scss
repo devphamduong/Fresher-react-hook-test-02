@@ -1,0 +1,49 @@
+.header-container {
+    align-items: center;
+    padding    : 10px;
+
+    .drawer {
+        text-align: center;
+
+        .drawer-icon {
+            font-size: 30px;
+        }
+    }
+
+    .logo {
+        .logo-icon {
+            color        : #4c96ff;
+            font-size    : 30px;
+            padding-right: 10px;
+        }
+
+        .logo-name {
+            font-weight: bold;
+            color      : #4c96ff;
+            font-size  : 20px;
+        }
+    }
+
+    .search {
+        padding: 10px;
+
+        .search-icon {
+            font-size: 20px;
+            color    : #4c96ff;
+        }
+    }
+
+    .others {
+        align-items: center;
+
+        .cart,
+        .settings {
+            text-align: center;
+
+            .cart-icon {
+                font-size: 30px;
+                color    : #4c96ff;
+            }
+        }
+    }
+}

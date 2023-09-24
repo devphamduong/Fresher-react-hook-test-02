@@ -8,6 +8,7 @@ import {
   createBrowserRouter,
   RouterProvider, Outlet
 } from "react-router-dom";
+
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Home from './components/Home';
@@ -17,6 +18,7 @@ import { getAccountAction } from './redux/account/accountSlice';
 import Loading from './components/Loading';
 import AdminPage from './pages/admin';
 import ProtectedRoute from './components/ProtectedRoute';
+import LayoutAdmin from './components/Admin/LayoutAdmin';
 
 const Layout = () => {
   return (
@@ -24,20 +26,6 @@ const Layout = () => {
       <Header />
       <Outlet />
       <Footer />
-    </div>
-  );
-};
-
-const LayoutAdmin = () => {
-  const isAdminRoute = window.location.pathname.startsWith('/admin');
-  const user = useSelector(state => state.account.user);
-  const userRole = user.role;
-
-  return (
-    <div className='layout-app'>
-      {isAdminRoute && userRole === 'ADMIN' && <Header />}
-      <Outlet />
-      {isAdminRoute && userRole === 'ADMIN' && <Footer />}
     </div>
   );
 };
@@ -100,7 +88,7 @@ export default function App() {
   }, []);
 
   const fetchAccount = async () => {
-    if (window.location.pathname !== '/login' || window.location.pathname !== '/register' || window.location.pathname !== '/') {
+    if (window.location.pathname !== '/login' || window.location.pathname !== '/register') {
       let res = await getAccount();
       if (res && res.data) {
         dispatch(getAccountAction(res.data.user));
