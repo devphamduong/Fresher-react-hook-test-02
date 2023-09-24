@@ -49,10 +49,20 @@ function Header(props) {
                     onClose={onClose}
                     open={open}
                 >
-                    <span style={{ cursor: 'pointer' }} >Manage account</span>
-                    <Divider />
-                    <span style={{ cursor: 'pointer' }} onClick={() => handleLogout()}>Log out</span>
-                    <Divider />
+                    {isAuthenticated
+                        ?
+                        <>
+                            <span style={{ cursor: 'pointer' }} >Manage account</span>
+                            <Divider />
+                            <span style={{ cursor: 'pointer' }} onClick={() => handleLogout()}>Log out</span>
+                            <Divider />
+                        </>
+                        :
+                        <>
+                            <span style={{ cursor: 'pointer' }} onClick={() => navigate('/login')}>Log In</span>
+                            <Divider />
+                        </>
+                    }
                 </Drawer>
             </Col>
             <Col span={0} md={6} className="logo">
