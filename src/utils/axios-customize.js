@@ -41,6 +41,9 @@ instance.interceptors.response.use(function (response) {
             return instance.request(error.config);
         }
     }
+    if (error.config && error.response && +error.response.status === 400 && error.response && error.config.url === '/api/v1/auth/refresh') {
+        window.location.href = '/login';
+    }
     return error?.response?.data ?? Promise.reject(error);
 });
 
