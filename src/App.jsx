@@ -81,7 +81,7 @@ const router = createBrowserRouter([
 
 export default function App() {
   const dispatch = useDispatch();
-  const isAuthenticated = useSelector(state => state.account.isAuthenticated);
+  const isLoading = useSelector(state => state.account.isLoading);
 
   useEffect(() => {
     fetchAccount();
@@ -98,7 +98,7 @@ export default function App() {
 
   return (
     <>
-      {isAuthenticated || window.location.pathname === '/login' || window.location.pathname === '/register' || window.location.pathname === '/'
+      {!isLoading || window.location.pathname === '/login' || window.location.pathname === '/register' || window.location.pathname === '/'
         ? <RouterProvider router={router} />
         : <Loading />}
     </>

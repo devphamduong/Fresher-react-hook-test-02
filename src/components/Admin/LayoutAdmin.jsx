@@ -1,14 +1,18 @@
 import { AppstoreOutlined, BookOutlined, DownOutlined, MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined } from "@ant-design/icons";
-import { Button, Dropdown, Layout, Menu, Space } from "antd";
+import { Button, Dropdown, Layout, Menu, Space, message } from "antd";
 const { Header, Sider, Content, Footer } = Layout;
 import { useState } from "react";
-import { useSelector } from "react-redux";
-import { Outlet, Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Outlet, Link, useNavigate } from "react-router-dom";
 import './LayoutAdmin.scss';
+import { logout } from "../../services/api";
+import { logoutAction } from "../../redux/account/accountSlice";
 
 const LayoutAdmin = () => {
     const user = useSelector(state => state.account.user);
     const [collapsed, setCollapsed] = useState(false);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const itemsNav = [
         {
@@ -37,14 +41,23 @@ const LayoutAdmin = () => {
 
     const itemsDrop = [
         {
-            label: 'Manage account',
+            label: <span>Manage account</span>,
             key: '0',
         },
         {
-            label: 'Log out',
+            label: <span onClick={() => handleLogout()}>Log out</span>,
             key: '1',
         }
     ];
+
+    const handleLogout = async () => {
+        const res = await logout();
+        if (res && res.data) {
+            dispatch(logoutAction());
+            message.success('Logout successfully');
+            navigate('/');
+        }
+    };
 
     return (
         <Layout style={{ minHeight: '100vh' }} className="layout-admin">

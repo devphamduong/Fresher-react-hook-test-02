@@ -1,27 +1,41 @@
 import './Header.scss';
-import { Badge, Col, Divider, Drawer, Dropdown, Input, Row, Space } from 'antd';
+import { Badge, Col, Divider, Drawer, Dropdown, Input, Row, Space, message } from 'antd';
 import { DownOutlined, SearchOutlined, ShoppingCartOutlined, SmileTwoTone, BarsOutlined } from '@ant-design/icons';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../../services/api';
+import { logoutAction } from '../../redux/account/accountSlice';
 
 function Header(props) {
     const isAuthenticated = useSelector(state => state.account.isAuthenticated);
     const user = useSelector(state => state.account.user);
     const [open, setOpen] = useState(false);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
     const items = [
         {
-            label: 'Manage account',
+            label: <span>Manage account</span>,
             key: '0',
         },
         {
-            label: 'Log out',
+            label: <span onClick={() => handleLogout()}>Log out</span>,
             key: '1',
         }
     ];
 
     const onClose = () => {
         setOpen(false);
+    };
+
+    const handleLogout = async () => {
+        const res = await logout();
+        if (res && res.data) {
+            dispatch(logoutAction());
+            message.success('Logout successfully');
+            navigate('/');
+        }
     };
 
     return (
@@ -35,9 +49,9 @@ function Header(props) {
                     onClose={onClose}
                     open={open}
                 >
-                    <p>Manage account</p>
+                    <span style={{ cursor: 'pointer' }} >Manage account</span>
                     <Divider />
-                    <p>Log out</p>
+                    <span style={{ cursor: 'pointer' }} onClick={() => handleLogout()}>Log out</span>
                     <Divider />
                 </Drawer>
             </Col>
