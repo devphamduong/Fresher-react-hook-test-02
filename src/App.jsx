@@ -19,6 +19,7 @@ import Loading from './components/Loading';
 import AdminPage from './pages/admin';
 import ProtectedRoute from './components/ProtectedRoute';
 import LayoutAdmin from './components/Admin/LayoutAdmin';
+import ManageUser from './components/Admin/User/ManageUser';
 
 const Layout = () => {
   return (
@@ -37,10 +38,6 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       { index: true, element: <Home /> },
-      {
-        path: "contact",
-        element: <ContactPage />,
-      },
       {
         path: "book",
         element: <BookPage />,
@@ -68,7 +65,7 @@ const router = createBrowserRouter([
       },
       {
         path: "user",
-        element: <ContactPage />,
+        element: <ManageUser />,
       },
       {
         path: "book",

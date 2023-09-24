@@ -94,7 +94,7 @@ const LayoutAdmin = () => {
                         </a>
                     </Dropdown>
                 </Header>
-                <Content>
+                <Content className="admin-content">
                     <Outlet />
                 </Content>
                 <Footer style={{ textAlign: 'center' }}>
