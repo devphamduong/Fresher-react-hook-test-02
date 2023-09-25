@@ -44,7 +44,8 @@ function ManageUser(props) {
     }, [current, pageSize]);
 
     const fetchUser = async () => {
-        let res = await getUserPaginate(current, pageSize);
+        const query = `current=${current}&pageSize=${pageSize}`;
+        let res = await getUserPaginate(query);
         if (res && res.data) {
             setListUsers(res.data.result);
             setTotal(res.data.meta.total);
@@ -61,9 +62,30 @@ function ManageUser(props) {
         }
     };
 
+    const buildQuery = (arrayValues) => {
+        let query = `current=${current}&pageSize=${pageSize}`;
+        let filter = '';
+        Object.entries(arrayValues).map(([key, value], index) => {
+            if (key && value) {
+                filter += `&${key}=/${value}/i`;
+            }
+        });
+        query += filter;
+        return query;
+    };
+
+    const handleSearchUser = async (arrayValues) => {
+        const query = buildQuery(arrayValues);
+        let res = await getUserPaginate(query);
+        if (res && res.data) {
+            setListUsers(res.data.result);
+            setTotal(res.data.meta.total);
+        }
+    };
+
     return (
         <>
-            <InputSearch />
+            <InputSearch handleSearchUser={handleSearchUser} />
             <Table
                 columns={columns}
                 dataSource={listUsers}

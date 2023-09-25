@@ -3,8 +3,12 @@ import { Button, Col, Form, Input, Row, Space } from "antd";
 function InputSearch(props) {
     const [form] = Form.useForm();
 
+    const buildQuery = (arrayValues) => {
+
+    };
+
     const onFinish = (values) => {
-        console.log('Received values of form: ', values);
+        props.handleSearchUser(values);
     };
 
     return (
@@ -18,7 +22,7 @@ function InputSearch(props) {
                 <Row justify={'space-around'}>
                     <Col span={7}>
                         <Form.Item
-                            name='name'
+                            name='fullName'
                             label='Name'
                         >
                             <Input />
