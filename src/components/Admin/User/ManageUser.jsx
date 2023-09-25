@@ -8,6 +8,9 @@ function ManageUser(props) {
     const [current, setCurrent] = useState(1);
     const [pageSize, setPageSize] = useState(2);
     const [total, setTotal] = useState(0);
+    const [isLoading, setIsLoading] = useState(false);
+    const [filter, setFilter] = useState('');
+    const [sortQuery, setSortQuery] = useState('');
 
     const columns = [
         {
@@ -41,15 +44,23 @@ function ManageUser(props) {
 
     useEffect(() => {
         fetchUser();
-    }, [current, pageSize]);
+    }, [current, pageSize, filter, sortQuery]);
 
     const fetchUser = async () => {
-        const query = `current=${current}&pageSize=${pageSize}`;
+        setIsLoading(true);
+        let query = `current=${current}&pageSize=${pageSize}`;
+        if (filter) {
+            query += filter;
+        }
+        if (sortQuery) {
+            query += sortQuery;
+        }
         let res = await getUserPaginate(query);
         if (res && res.data) {
             setListUsers(res.data.result);
             setTotal(res.data.meta.total);
         }
+        setIsLoading(false);
     };
 
     const onChange = (pagination, filters, sorter, extra) => {
@@ -60,27 +71,18 @@ function ManageUser(props) {
             setPageSize(pagination.pageSize);
             setCurrent(1);
         }
-    };
-
-    const buildQuery = (arrayValues) => {
-        let query = `current=${current}&pageSize=${pageSize}`;
-        let filter = '';
-        Object.entries(arrayValues).map(([key, value], index) => {
-            if (key && value) {
-                filter += `&${key}=/${value}/i`;
+        if (sorter && sorter.field) {
+            const column = sorter.field;
+            const order = sorter.order;
+            if (order) {
+                let sort = order === 'ascend' ? `&sort=${column}` : `&sort=-${column}`;
+                setSortQuery(sort);
             }
-        });
-        query += filter;
-        return query;
+        }
     };
 
-    const handleSearchUser = async (arrayValues) => {
-        const query = buildQuery(arrayValues);
-        let res = await getUserPaginate(query);
-        if (res && res.data) {
-            setListUsers(res.data.result);
-            setTotal(res.data.meta.total);
-        }
+    const handleSearchUser = async (filter) => {
+        setFilter(filter);
     };
 
     return (
@@ -91,6 +93,7 @@ function ManageUser(props) {
                 dataSource={listUsers}
                 onChange={onChange}
                 rowKey={'_id'}
+                loading={isLoading}
                 pagination={{
                     total: total, current: current, pageSize: pageSize, showSizeChanger: true
                 }} />

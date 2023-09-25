@@ -8,7 +8,13 @@ function InputSearch(props) {
     };
 
     const onFinish = (values) => {
-        props.handleSearchUser(values);
+        let filter = '';
+        Object.entries(values).map(([key, value], index) => {
+            if (key && value) {
+                filter += `&${key}=/${value}/i`;
+            }
+        });
+        props.handleSearchUser(filter);
     };
 
     return (
@@ -53,6 +59,7 @@ function InputSearch(props) {
                         <Button
                             onClick={() => {
                                 form.resetFields();
+                                props.handleSearchUser();
                             }}
                         >
                             Clear
