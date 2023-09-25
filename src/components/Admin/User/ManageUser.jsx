@@ -1,69 +1,77 @@
-import { Table } from 'antd';
+import { Button, Table } from 'antd';
 import InputSearch from './InputSearch';
+import { useEffect, useState } from 'react';
+import { getUserPaginate } from '../../../services/api';
 
 function ManageUser(props) {
+    const [listUsers, setListUsers] = useState([]);
+    const [current, setCurrent] = useState(1);
+    const [pageSize, setPageSize] = useState(2);
+    const [total, setTotal] = useState(0);
 
     const columns = [
         {
-            title: 'Name',
-            dataIndex: 'name',
+            title: 'Id',
+            dataIndex: '_id',
+        },
+        {
+            title: 'Full name',
+            dataIndex: 'fullName',
             sorter: true,
         },
         {
-            title: 'Chinese Score',
-            dataIndex: 'chinese',
+            title: 'Email',
+            dataIndex: 'email',
             sorter: true,
         },
         {
-            title: 'Math Score',
-            dataIndex: 'math',
+            title: 'Phone',
+            dataIndex: 'phone',
             sorter: true,
         },
         {
-            title: 'English Score',
-            dataIndex: 'english',
-            sorter: true,
+            title: 'Action',
+            render: (text, record, index) => {
+                return (
+                    <Button>Delete</Button>
+                );
+            }
         },
     ];
 
-    const data = [
-        {
-            key: '1',
-            name: 'Aohn Brown',
-            chinese: 98,
-            math: 60,
-            english: 70,
-        },
-        {
-            key: '2',
-            name: 'Bim Green',
-            chinese: 98,
-            math: 66,
-            english: 89,
-        },
-        {
-            key: '3',
-            name: 'Coe Black',
-            chinese: 98,
-            math: 90,
-            english: 70,
-        },
-        {
-            key: '4',
-            name: 'Dim Red',
-            chinese: 88,
-            math: 99,
-            english: 89,
-        },
-    ];
+    useEffect(() => {
+        fetchUser();
+    }, [current, pageSize]);
+
+    const fetchUser = async () => {
+        let res = await getUserPaginate(current, pageSize);
+        if (res && res.data) {
+            setListUsers(res.data.result);
+            setTotal(res.data.meta.total);
+        }
+    };
 
     const onChange = (pagination, filters, sorter, extra) => {
-        console.log('params', pagination, filters, sorter, extra);
+        if (pagination && pagination.current !== current) {
+            setCurrent(pagination.current);
+        }
+        if (pagination && pagination.pageSize !== pageSize) {
+            setPageSize(pagination.pageSize);
+            setCurrent(1);
+        }
     };
+
     return (
         <>
             <InputSearch />
-            <Table columns={columns} dataSource={data} onChange={onChange} />
+            <Table
+                columns={columns}
+                dataSource={listUsers}
+                onChange={onChange}
+                rowKey={'_id'}
+                pagination={{
+                    total: total, current: current, pageSize: pageSize, showSizeChanger: true
+                }} />
         </>
     );
 }
