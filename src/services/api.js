@@ -19,3 +19,7 @@ export const logout = () => {
 export const getUserPaginate = (query) => {
     return axios.get(`/api/v1/user?${query}`);
 };
+
+export const createUser = (data) => {
+    return axios.post('/api/v1/user', { ...data });
+};

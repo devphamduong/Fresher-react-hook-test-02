@@ -130,7 +130,7 @@ function ManageUser(props) {
                 <span style={{ display: 'flex', gap: 15 }}>
                     <Button type="primary" icon={<DownloadOutlined />}>Export</Button>
                     <Button type="primary" icon={<CloudUploadOutlined />}>Import</Button>
-                    <Button type="primary" icon={<PlusOutlined />}>Add user</Button>
+                    <Button type="primary" icon={<PlusOutlined />} onClick={() => { setOpen(true); setActionModal("CREATE"); }}>Add user</Button>
                     <Button type='ghost' icon={<ReloadOutlined />} onClick={() => { setFilter(''); setSortQuery(''); }}></Button>
                 </span>
             </div>
@@ -161,7 +161,7 @@ function ManageUser(props) {
                         );
                     }
                 }} />
-            <ModalUser action={actionModal} userDetail={userDetail} open={open} onClose={onClose} width='50vw' />
+            <ModalUser action={actionModal} userDetail={userDetail} open={open} onClose={onClose} width='50vw' fetchUser={fetchUser} />
         </>
     );
 }
