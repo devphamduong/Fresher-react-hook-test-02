@@ -1,7 +1,10 @@
-import { Button, Table } from 'antd';
+import { Popconfirm, Table, message } from 'antd';
 import InputSearch from './InputSearch';
 import { useEffect, useState } from 'react';
 import { getUserPaginate } from '../../../services/api';
+import { BsTrash3 } from 'react-icons/bs';
+import { WarningOutlined } from '@ant-design/icons';
+import ModalUser from './ModalUser';
 
 function ManageUser(props) {
     const [listUsers, setListUsers] = useState([]);
@@ -11,11 +14,35 @@ function ManageUser(props) {
     const [isLoading, setIsLoading] = useState(false);
     const [filter, setFilter] = useState('');
     const [sortQuery, setSortQuery] = useState('');
+    const [open, setOpen] = useState(false);
+    const [userDetail, setUserDetail] = useState({});
+    const [actionModal, setActionModal] = useState('DETAIL');
+
+    const confirm = (event) => {
+        message.success('Click on Yes');
+    };
+
+    const handleViewDetail = (data) => {
+        setActionModal('DETAIL');
+        setUserDetail(data);
+        setOpen(true);
+    };
+
+    const onClose = () => {
+        setOpen(false);
+    };
 
     const columns = [
         {
             title: 'Id',
             dataIndex: '_id',
+            render: (text, record, index) => {
+                return (
+                    <>
+                        <a onClick={() => handleViewDetail(record)}>{record._id}</a>
+                    </>
+                );
+            }
         },
         {
             title: 'Full name',
@@ -36,7 +63,16 @@ function ManageUser(props) {
             title: 'Action',
             render: (text, record, index) => {
                 return (
-                    <Button>Delete</Button>
+                    <Popconfirm
+                        title="Delete the user"
+                        description="Are you sure to delete this user?"
+                        onConfirm={confirm}
+                        okText='Yes'
+                        cancelText='No'
+                        icon={<WarningOutlined style={{ color: 'red' }} />}
+                    >
+                        <BsTrash3 style={{ cursor: 'pointer', color: 'red' }} />
+                    </Popconfirm>
                 );
             }
         },
@@ -82,7 +118,9 @@ function ManageUser(props) {
     };
 
     const handleSearchUser = async (filter) => {
-        setFilter(filter);
+        if (filter) {
+            setFilter(filter);
+        }
     };
 
     return (
@@ -94,9 +132,11 @@ function ManageUser(props) {
                 onChange={onChange}
                 rowKey={'_id'}
                 loading={isLoading}
+                bordered
                 pagination={{
                     total: total, current: current, pageSize: pageSize, showSizeChanger: true
                 }} />
+            <ModalUser action={actionModal} userDetail={userDetail} open={open} onClose={onClose} width='50vw' />
         </>
     );
 }

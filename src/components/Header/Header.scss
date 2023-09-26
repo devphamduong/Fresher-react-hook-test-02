@@ -12,15 +12,29 @@
 
     .logo {
         .logo-icon {
-            color        : #4c96ff;
-            font-size    : 30px;
-            padding-right: 10px;
+            color                    : #4c96ff;
+            font-size                : 30px;
+            animation-name           : spin;
+            animation-duration       : 5000ms;
+            animation-iteration-count: infinite;
+            animation-timing-function: linear;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         .logo-name {
-            font-weight: bold;
-            color      : #4c96ff;
-            font-size  : 20px;
+            padding-left: 10px;
+            font-weight : bold;
+            color       : #4c96ff;
+            font-size   : 20px;
         }
     }
 

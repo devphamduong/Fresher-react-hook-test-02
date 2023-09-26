@@ -6,6 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../services/api';
 import { logoutAction } from '../../redux/account/accountSlice';
+import { FaReact } from 'react-icons/fa';
 
 function Header(props) {
     const isAuthenticated = useSelector(state => state.account.isAuthenticated);
@@ -68,7 +69,7 @@ function Header(props) {
             <Col span={0} md={6} className="logo">
                 <Row justify={'center'}>
                     <Col>
-                        <SmileTwoTone className='logo-icon' />
+                        <FaReact className='logo-icon' />
                     </Col>
                     <Col>
                         <span className='logo-name'>DuongPC</span>
