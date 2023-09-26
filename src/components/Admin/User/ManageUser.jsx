@@ -5,6 +5,7 @@ import { getUserPaginate } from '../../../services/api';
 import { BsTrash3 } from 'react-icons/bs';
 import { CloudUploadOutlined, DownloadOutlined, PlusOutlined, ReloadOutlined, WarningOutlined } from '@ant-design/icons';
 import ModalUser from './ModalUser';
+import ModalUpLoad from './ModalUpLoad';
 
 function ManageUser(props) {
     const [listUsers, setListUsers] = useState([]);
@@ -14,7 +15,8 @@ function ManageUser(props) {
     const [isLoading, setIsLoading] = useState(false);
     const [filter, setFilter] = useState('');
     const [sortQuery, setSortQuery] = useState('');
-    const [open, setOpen] = useState(false);
+    const [openModalUser, setOpenModalUser] = useState(false);
+    const [openModalUpLoad, setOpenModalUpLoad] = useState(false);
     const [userDetail, setUserDetail] = useState({});
     const [actionModal, setActionModal] = useState('DETAIL');
 
@@ -25,11 +27,15 @@ function ManageUser(props) {
     const handleViewDetail = (data) => {
         setActionModal('DETAIL');
         setUserDetail(data);
-        setOpen(true);
+        setOpenModalUser(true);
     };
 
-    const onClose = () => {
-        setOpen(false);
+    const onCloseModalUser = () => {
+        setOpenModalUser(false);
+    };
+
+    const onCloseModalUpLoad = () => {
+        setOpenModalUpLoad(false);
     };
 
     const columns = [
@@ -129,8 +135,8 @@ function ManageUser(props) {
                 <span>List users</span>
                 <span style={{ display: 'flex', gap: 15 }}>
                     <Button type="primary" icon={<DownloadOutlined />}>Export</Button>
-                    <Button type="primary" icon={<CloudUploadOutlined />}>Import</Button>
-                    <Button type="primary" icon={<PlusOutlined />} onClick={() => { setOpen(true); setActionModal("CREATE"); }}>Add user</Button>
+                    <Button type="primary" icon={<CloudUploadOutlined />} onClick={() => setOpenModalUpLoad(true)}>Import</Button>
+                    <Button type="primary" icon={<PlusOutlined />} onClick={() => { setOpenModalUser(true); setActionModal("CREATE"); }}>Add user</Button>
                     <Button type='ghost' icon={<ReloadOutlined />} onClick={() => { setFilter(''); setSortQuery(''); }}></Button>
                 </span>
             </div>
@@ -161,7 +167,8 @@ function ManageUser(props) {
                         );
                     }
                 }} />
-            <ModalUser action={actionModal} userDetail={userDetail} open={open} onClose={onClose} width='50vw' fetchUser={fetchUser} />
+            <ModalUser action={actionModal} userDetail={userDetail} open={openModalUser} onClose={onCloseModalUser} width='50vw' fetchUser={fetchUser} />
+            <ModalUpLoad open={openModalUpLoad} onClose={onCloseModalUpLoad} />
         </>
     );
 }
