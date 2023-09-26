@@ -1,6 +1,6 @@
 import './Header.scss';
-import { Badge, Col, Divider, Drawer, Dropdown, Input, Row, Space, message } from 'antd';
-import { DownOutlined, SearchOutlined, ShoppingCartOutlined, SmileTwoTone, BarsOutlined } from '@ant-design/icons';
+import { Avatar, Badge, Col, Divider, Drawer, Dropdown, Input, Row, Space, message } from 'antd';
+import { SearchOutlined, ShoppingCartOutlined, SmileTwoTone, BarsOutlined, UserOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -15,16 +15,31 @@ function Header(props) {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const items = [
-        {
-            label: <span>Manage account</span>,
-            key: '0',
-        },
-        {
-            label: <span onClick={() => handleLogout()}>Log out</span>,
-            key: '1',
-        }
-    ];
+    const items =
+        user.role === "ADMIN"
+            ?
+            [{
+                label: <div onClick={() => navigate('/admin')}>Admin</div>,
+                key: '0',
+            },
+            {
+                label: <div>Manage account</div>,
+                key: '1',
+            },
+            {
+                label: <div onClick={() => handleLogout()}>Log out</div>,
+                key: '2',
+            }]
+            :
+            [{
+                label: <div>Manage account</div>,
+                key: '0',
+            },
+            {
+                label: <div onClick={() => handleLogout()}>Log out</div>,
+                key: '1',
+            }
+            ];
 
     const onClose = () => {
         setOpen(false);
@@ -38,6 +53,8 @@ function Header(props) {
             navigate('/');
         }
     };
+
+    const urlAvatar = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${user.avatar}`;
 
     return (
         <Row className='header-container'>
@@ -53,9 +70,11 @@ function Header(props) {
                     {isAuthenticated
                         ?
                         <>
-                            <span style={{ cursor: 'pointer' }} >Manage account</span>
+                            <div style={{ cursor: 'pointer' }} onClick={() => navigate('/admin')}>Admin</div>
                             <Divider />
-                            <span style={{ cursor: 'pointer' }} onClick={() => handleLogout()}>Log out</span>
+                            <div style={{ cursor: 'pointer' }} >Manage account</div>
+                            <Divider />
+                            <div style={{ cursor: 'pointer' }} onClick={() => handleLogout()}>Log out</div>
                             <Divider />
                         </>
                         :
@@ -94,8 +113,7 @@ function Header(props) {
                             ? <Dropdown menu={{ items }} trigger={['click']}>
                                 <a onClick={(e) => e.preventDefault()}>
                                     <Space>
-                                        {user.fullName}
-                                        <DownOutlined />
+                                        <Avatar src={urlAvatar} />{user.fullName}
                                     </Space>
                                 </a>
                             </Dropdown>

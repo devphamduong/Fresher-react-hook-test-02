@@ -1,5 +1,5 @@
-import { AppstoreOutlined, BookOutlined, DownOutlined, MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined } from "@ant-design/icons";
-import { Button, Dropdown, Layout, Menu, Space, message } from "antd";
+import { AppstoreOutlined, BookOutlined, MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined } from "@ant-design/icons";
+import { Avatar, Button, Dropdown, Layout, Menu, Space, message } from "antd";
 const { Header, Sider, Content, Footer } = Layout;
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -41,12 +41,16 @@ const LayoutAdmin = () => {
 
     const itemsDrop = [
         {
-            label: <span>Manage account</span>,
+            label: <div onClick={() => navigate('/')}>Home</div>,
             key: '0',
         },
         {
-            label: <span onClick={() => handleLogout()}>Log out</span>,
+            label: <span>Manage account</span>,
             key: '1',
+        },
+        {
+            label: <div onClick={() => handleLogout()}>Log out</div>,
+            key: '2',
         }
     ];
 
@@ -58,6 +62,8 @@ const LayoutAdmin = () => {
             navigate('/');
         }
     };
+
+    const urlAvatar = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${user.avatar}`;
 
     return (
         <Layout style={{ minHeight: '100vh' }} className="layout-admin">
@@ -88,8 +94,7 @@ const LayoutAdmin = () => {
                     <Dropdown menu={{ items: itemsDrop }} trigger={['click']}>
                         <a onClick={(e) => e.preventDefault()}>
                             <Space>
-                                {user.fullName}
-                                <DownOutlined />
+                                <Avatar src={urlAvatar} />{user.fullName}
                             </Space>
                         </a>
                     </Dropdown>

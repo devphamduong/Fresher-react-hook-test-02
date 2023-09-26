@@ -1,9 +1,9 @@
-import { Popconfirm, Table, message } from 'antd';
+import { Button, Popconfirm, Table, message } from 'antd';
 import InputSearch from './InputSearch';
 import { useEffect, useState } from 'react';
 import { getUserPaginate } from '../../../services/api';
 import { BsTrash3 } from 'react-icons/bs';
-import { WarningOutlined } from '@ant-design/icons';
+import { CloudUploadOutlined, DownloadOutlined, PlusOutlined, ReloadOutlined, WarningOutlined } from '@ant-design/icons';
 import ModalUser from './ModalUser';
 
 function ManageUser(props) {
@@ -123,10 +123,25 @@ function ManageUser(props) {
         }
     };
 
+    const renderHeader = () => {
+        return (
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span>List users</span>
+                <span style={{ display: 'flex', gap: 15 }}>
+                    <Button type="primary" icon={<DownloadOutlined />}>Export</Button>
+                    <Button type="primary" icon={<CloudUploadOutlined />}>Import</Button>
+                    <Button type="primary" icon={<PlusOutlined />}>Add user</Button>
+                    <Button type='ghost' icon={<ReloadOutlined />} onClick={() => { setFilter(''); setSortQuery(''); }}></Button>
+                </span>
+            </div>
+        );
+    };
+
     return (
         <>
             <InputSearch handleSearchUser={handleSearchUser} />
             <Table
+                title={renderHeader}
                 columns={columns}
                 dataSource={listUsers}
                 onChange={onChange}
@@ -134,7 +149,17 @@ function ManageUser(props) {
                 loading={isLoading}
                 bordered
                 pagination={{
-                    total: total, current: current, pageSize: pageSize, showSizeChanger: true
+                    total: total,
+                    current: current,
+                    pageSize: pageSize,
+                    showSizeChanger: true,
+                    showTotal: (total, range) => {
+                        return (
+                            <div>
+                                {range[0]}-{range[1]} on {total} rows
+                            </div>
+                        );
+                    }
                 }} />
             <ModalUser action={actionModal} userDetail={userDetail} open={open} onClose={onClose} width='50vw' />
         </>
