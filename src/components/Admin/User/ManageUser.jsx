@@ -6,6 +6,7 @@ import { BsTrash3 } from 'react-icons/bs';
 import { CloudUploadOutlined, DownloadOutlined, PlusOutlined, ReloadOutlined, WarningOutlined } from '@ant-design/icons';
 import ModalUser from './ModalUser';
 import ModalUpLoad from './ModalUpLoad';
+import * as XLSX from 'xlsx';
 
 function ManageUser(props) {
     const [listUsers, setListUsers] = useState([]);
@@ -129,12 +130,21 @@ function ManageUser(props) {
         }
     };
 
+    const exportData = () => {
+        if (listUsers.length > 0) {
+            const worksheet = XLSX.utils.json_to_sheet(listUsers);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+            XLSX.writeFile(workbook, "Data.xlsx");
+        }
+    };
+
     const renderHeader = () => {
         return (
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span>List users</span>
                 <span style={{ display: 'flex', gap: 15 }}>
-                    <Button type="primary" icon={<DownloadOutlined />}>Export</Button>
+                    <Button type="primary" icon={<DownloadOutlined />} onClick={() => exportData()} >Export</Button>
                     <Button type="primary" icon={<CloudUploadOutlined />} onClick={() => setOpenModalUpLoad(true)}>Import</Button>
                     <Button type="primary" icon={<PlusOutlined />} onClick={() => { setOpenModalUser(true); setActionModal("CREATE"); }}>Add user</Button>
                     <Button type='ghost' icon={<ReloadOutlined />} onClick={() => { setFilter(''); setSortQuery(''); }}></Button>
