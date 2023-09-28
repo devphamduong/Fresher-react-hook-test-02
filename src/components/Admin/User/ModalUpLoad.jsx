@@ -4,6 +4,7 @@ import { InboxOutlined } from '@ant-design/icons';
 import * as XLSX from 'xlsx';
 import { useState } from "react";
 import { bulkCreateUser } from "../../../services/api";
+import templateFile from './template-import.xlsx?url';
 
 const { Dragger } = Upload;
 
@@ -98,6 +99,9 @@ function ModalUpLoad(props) {
                 <p className="ant-upload-text">Click or drag file to this area to upload</p>
                 <p className="ant-upload-hint">
                     Support for a single upload. Only accept .csv, .xls, .xlsx
+                    <div>
+                        <a onClick={e => e.stopPropagation()} href={templateFile} download>Download Sample File</a>
+                    </div>
                 </p>
             </Dragger>
             <Table
