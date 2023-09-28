@@ -23,3 +23,7 @@ export const getUserPaginate = (query) => {
 export const createUser = (data) => {
     return axios.post('/api/v1/user', { ...data });
 };
+
+export const bulkCreateUser = (data) => {
+    return axios.post('/api/v1/user/bulk-create', data);
+};

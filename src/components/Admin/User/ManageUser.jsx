@@ -168,7 +168,7 @@ function ManageUser(props) {
                     }
                 }} />
             <ModalUser action={actionModal} userDetail={userDetail} open={openModalUser} onClose={onCloseModalUser} width='50vw' fetchUser={fetchUser} />
-            <ModalUpLoad open={openModalUpLoad} onClose={onCloseModalUpLoad} />
+            <ModalUpLoad open={openModalUpLoad} onClose={onCloseModalUpLoad} fetchUser={fetchUser} />
         </>
     );
 }

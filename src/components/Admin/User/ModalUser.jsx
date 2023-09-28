@@ -9,8 +9,8 @@ function ModalUser(props) {
     const [loading, setLoading] = useState(false);
 
     const handleCancel = () => {
-        form.resetFields();
         onClose();
+        form.resetFields();
     };
 
     const onFinish = async (values) => {
@@ -18,8 +18,8 @@ function ModalUser(props) {
         let res = await createUser(values);
         if (res && res.data) {
             message.success("Created user successfully!");
-            form.resetFields();
             onClose();
+            form.resetFields();
             await fetchUser();
         } else {
             notification.error({
