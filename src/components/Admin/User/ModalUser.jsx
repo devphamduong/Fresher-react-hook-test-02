@@ -1,41 +1,68 @@
 import { Descriptions, Drawer, Form, Input, Modal, Space, Tag, message, notification } from "antd";
 import moment from "moment/moment";
-import { createUser } from "../../../services/api";
-import { useState } from "react";
+import { createUser, updateUser } from "../../../services/api";
+import { useEffect, useState } from "react";
 
 function ModalUser(props) {
-    const { action, userDetail, open, onClose, width, fetchUser } = props;
-    const [form] = Form.useForm();
+    const { action, userDetail, open, onClose, fetchUser } = props;
+    const [formAdd] = Form.useForm();
+    const [formUpdate] = Form.useForm();
     const [loading, setLoading] = useState(false);
 
     const handleCancel = () => {
         onClose();
-        form.resetFields();
+        if (action === 'CREATE') {
+            formAdd.resetFields();
+        } else if (action === 'UPDATE') {
+            formUpdate.resetFields();
+        }
     };
 
     const onFinish = async (values) => {
         setLoading(true);
-        let res = await createUser(values);
-        if (res && res.data) {
-            message.success("Created user successfully!");
-            onClose();
-            form.resetFields();
-            await fetchUser();
-        } else {
-            notification.error({
-                message: 'An error occurred',
-                description: res.message,
-                duration: 5
-            });
+        if (action === 'CREATE') {
+            let res = await createUser(values);
+            if (res && res.data) {
+                message.success("Created user successfully!");
+                onClose();
+                formAdd.resetFields();
+                await fetchUser();
+            } else {
+                notification.error({
+                    message: 'An error occurred',
+                    description: res.message,
+                    duration: 5
+                });
+            }
+        } else if (action === 'UPDATE') {
+            let res = await updateUser(values);
+            if (res && res.data) {
+                message.success("Updated user successfully!");
+                onClose();
+                formAdd.resetFields();
+                await fetchUser();
+            } else {
+                notification.error({
+                    message: 'An error occurred',
+                    description: res.message,
+                    duration: 5
+                });
+            }
         }
         setLoading(false);
     };
 
+    useEffect(() => {
+        if (action === 'UPDATE') {
+            formUpdate.setFieldsValue(userDetail);
+        }
+    }, [userDetail]);
+
     return (
         <>
             {action === 'DETAIL'
-                ?
-                <Drawer title={action === 'DETAIL' ? "Detail" : "Update"} placement="right" onClose={onClose} open={open} width={width}>
+                &&
+                <Drawer title="Detail" placement="right" onClose={onClose} open={open} width={'50vw'}>
                     <Descriptions title="User Info" bordered column={2}>
                         <Descriptions.Item label="Id">{userDetail?._id}</Descriptions.Item>
                         <Descriptions.Item label="Full name">{userDetail?.fullName}</Descriptions.Item>
@@ -54,9 +81,11 @@ function ModalUser(props) {
                         </Descriptions.Item>
                     </Descriptions>
                 </Drawer>
-                :
-                <Modal title="Add user" open={open} onOk={() => form.submit()} centered onCancel={handleCancel} okText="Add" confirmLoading={loading}>
-                    <Form form={form} name="basic" layout="vertical" onFinish={onFinish}>
+            }
+            {action === 'CREATE'
+                &&
+                <Modal title="Add user" open={open} onOk={() => formAdd.submit()} centered onCancel={handleCancel} okText="Add" confirmLoading={loading}>
+                    <Form form={formAdd} name="basic" layout="vertical" onFinish={onFinish}>
                         <Form.Item
                             label="Full Name"
                             name="fullName"
@@ -107,6 +136,41 @@ function ModalUser(props) {
                             rules={[{ required: true, message: 'Please input your phone!' }]}
                         >
                             <Input />
+                        </Form.Item>
+                    </Form>
+                </Modal>
+            }
+            {action === 'UPDATE'
+                &&
+                <Modal title="Update user" open={open} onOk={() => formUpdate.submit()} centered onCancel={handleCancel} okText="Save" confirmLoading={loading}>
+                    <Form form={formUpdate} name="basic" layout="vertical" onFinish={onFinish}>
+                        <Form.Item
+                            label="Id"
+                            name="_id"
+                            rules={[{ required: true, message: 'Please input your id!' }]}
+                            hidden
+                        >
+                            <Input defaultValue={userDetail?.fullName} />
+                        </Form.Item>
+                        <Form.Item
+                            label="Full Name"
+                            name="fullName"
+                            rules={[{ required: true, message: 'Please input your full name!' }]}
+                        >
+                            <Input defaultValue={userDetail?.fullName} />
+                        </Form.Item>
+                        <Form.Item
+                            label="Email"
+                            name="email"
+                        >
+                            <Input defaultValue={userDetail?.email} disabled />
+                        </Form.Item>
+                        <Form.Item
+                            label="Phone"
+                            name="phone"
+                            rules={[{ required: true, message: 'Please input your phone!' }]}
+                        >
+                            <Input defaultValue={userDetail?.phone} />
                         </Form.Item>
                     </Form>
                 </Modal>

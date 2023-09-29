@@ -2,7 +2,7 @@ import { Button, Popconfirm, Table, message } from 'antd';
 import InputSearch from './InputSearch';
 import { useEffect, useState } from 'react';
 import { getUserPaginate } from '../../../services/api';
-import { BsTrash3 } from 'react-icons/bs';
+import { BsTrash3, BsPencil } from 'react-icons/bs';
 import { CloudUploadOutlined, DownloadOutlined, PlusOutlined, ReloadOutlined, WarningOutlined } from '@ant-design/icons';
 import ModalUser from './ModalUser';
 import ModalUpLoad from './ModalUpLoad';
@@ -27,6 +27,12 @@ function ManageUser(props) {
 
     const handleViewDetail = (data) => {
         setActionModal('DETAIL');
+        setUserDetail(data);
+        setOpenModalUser(true);
+    };
+
+    const handleEditUser = (data) => {
+        setActionModal('UPDATE');
         setUserDetail(data);
         setOpenModalUser(true);
     };
@@ -70,16 +76,19 @@ function ManageUser(props) {
             title: 'Action',
             render: (text, record, index) => {
                 return (
-                    <Popconfirm
-                        title="Delete the user"
-                        description="Are you sure to delete this user?"
-                        onConfirm={confirm}
-                        okText='Yes'
-                        cancelText='No'
-                        icon={<WarningOutlined style={{ color: 'red' }} />}
-                    >
-                        <BsTrash3 style={{ cursor: 'pointer', color: 'red' }} />
-                    </Popconfirm>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
+                        <Popconfirm
+                            title="Delete the user"
+                            description="Are you sure to delete this user?"
+                            onConfirm={confirm}
+                            okText='Yes'
+                            cancelText='No'
+                            icon={<WarningOutlined style={{ color: '#dc3545' }} />}
+                        >
+                            <BsTrash3 style={{ cursor: 'pointer', color: '#dc3545', fontSize: 15 }} />
+                        </Popconfirm>
+                        <BsPencil style={{ cursor: 'pointer', color: '#ffc107', fontSize: 15 }} onClick={() => handleEditUser(record)} />
+                    </div>
                 );
             }
         },
@@ -177,7 +186,7 @@ function ManageUser(props) {
                         );
                     }
                 }} />
-            <ModalUser action={actionModal} userDetail={userDetail} open={openModalUser} onClose={onCloseModalUser} width='50vw' fetchUser={fetchUser} />
+            <ModalUser action={actionModal} userDetail={userDetail} open={openModalUser} onClose={onCloseModalUser} fetchUser={fetchUser} />
             <ModalUpLoad open={openModalUpLoad} onClose={onCloseModalUpLoad} fetchUser={fetchUser} />
         </>
     );

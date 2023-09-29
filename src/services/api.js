@@ -27,3 +27,7 @@ export const createUser = (data) => {
 export const bulkCreateUser = (data) => {
     return axios.post('/api/v1/user/bulk-create', data);
 };
+
+export const updateUser = (data) => {
+    return axios.put('/api/v1/user', { ...data });
+};
