@@ -1,7 +1,7 @@
-import { Button, Popconfirm, Table, message } from 'antd';
+import { Button, Popconfirm, Table, message, notification } from 'antd';
 import InputSearch from './InputSearch';
 import { useEffect, useState } from 'react';
-import { getUserPaginate } from '../../../services/api';
+import { deleteUser, getUserPaginate } from '../../../services/api';
 import { BsTrash3, BsPencil } from 'react-icons/bs';
 import { CloudUploadOutlined, DownloadOutlined, PlusOutlined, ReloadOutlined, WarningOutlined } from '@ant-design/icons';
 import ModalUser from './ModalUser';
@@ -21,8 +21,18 @@ function ManageUser(props) {
     const [userDetail, setUserDetail] = useState({});
     const [actionModal, setActionModal] = useState('DETAIL');
 
-    const confirm = (event) => {
-        message.success('Click on Yes');
+    const handleDeleteUser = async (id) => {
+        let res = await deleteUser(id);
+        if (res && res.data) {
+            message.success("Deleted user successfully!");
+            await fetchUser();
+        } else {
+            notification.error({
+                message: 'An error occurred',
+                description: res.message,
+                duration: 5
+            });
+        }
     };
 
     const handleViewDetail = (data) => {
@@ -80,15 +90,16 @@ function ManageUser(props) {
                         <Popconfirm
                             title="Delete the user"
                             description="Are you sure to delete this user?"
-                            onConfirm={confirm}
+                            onConfirm={() => handleDeleteUser(record._id)}
                             okText='Yes'
                             cancelText='No'
+                            placement='left'
                             icon={<WarningOutlined style={{ color: '#dc3545' }} />}
                         >
                             <BsTrash3 style={{ cursor: 'pointer', color: '#dc3545', fontSize: 15 }} />
                         </Popconfirm>
                         <BsPencil style={{ cursor: 'pointer', color: '#ffc107', fontSize: 15 }} onClick={() => handleEditUser(record)} />
-                    </div>
+                    </div >
                 );
             }
         },

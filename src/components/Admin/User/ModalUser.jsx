@@ -1,4 +1,4 @@
-import { Descriptions, Drawer, Form, Input, Modal, Space, Tag, message, notification } from "antd";
+import { Descriptions, Drawer, Form, Input, Modal, Tag, message, notification } from "antd";
 import moment from "moment/moment";
 import { createUser, updateUser } from "../../../services/api";
 import { useEffect, useState } from "react";
@@ -20,34 +20,24 @@ function ModalUser(props) {
 
     const onFinish = async (values) => {
         setLoading(true);
+        let res;
         if (action === 'CREATE') {
-            let res = await createUser(values);
-            if (res && res.data) {
-                message.success("Created user successfully!");
-                onClose();
-                formAdd.resetFields();
-                await fetchUser();
-            } else {
-                notification.error({
-                    message: 'An error occurred',
-                    description: res.message,
-                    duration: 5
-                });
-            }
+            res = await createUser(values);
+
         } else if (action === 'UPDATE') {
-            let res = await updateUser(values);
-            if (res && res.data) {
-                message.success("Updated user successfully!");
-                onClose();
-                formAdd.resetFields();
-                await fetchUser();
-            } else {
-                notification.error({
-                    message: 'An error occurred',
-                    description: res.message,
-                    duration: 5
-                });
-            }
+            res = await updateUser(values);
+        }
+        if (res && res.data) {
+            action === 'CREATE' ? message.success("Created user successfully!") : message.success("Updated user successfully!");
+            onClose();
+            formAdd.resetFields();
+            await fetchUser();
+        } else {
+            notification.error({
+                message: 'An error occurred',
+                description: res.message,
+                duration: 5
+            });
         }
         setLoading(false);
     };
@@ -142,7 +132,7 @@ function ModalUser(props) {
             }
             {action === 'UPDATE'
                 &&
-                <Modal title="Update user" open={open} onOk={() => formUpdate.submit()} centered onCancel={handleCancel} okText="Save" confirmLoading={loading}>
+                <Modal title="Update user" open={open} onOk={() => formUpdate.submit()} centered onCancel={handleCancel} okText="Save changes" confirmLoading={loading}>
                     <Form form={formUpdate} name="basic" layout="vertical" onFinish={onFinish}>
                         <Form.Item
                             label="Id"
