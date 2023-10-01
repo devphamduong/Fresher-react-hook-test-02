@@ -35,3 +35,19 @@ export const updateUser = (data) => {
 export const deleteUser = (id) => {
     return axios.delete(`/api/v1/user/${id}`);
 };
+
+export const getBookPaginate = (query) => {
+    return axios.get(`/api/v1/book?${query}`);
+};
+
+export const createBook = (data) => {
+    return axios.post('/api/v1/book', { ...data });
+};
+
+export const updateBook = (data) => {
+    return axios.put('/api/v1/book', { ...data });
+};
+
+export const deleteBook = (id) => {
+    return axios.delete(`/api/v1/book/${id}`);
+};

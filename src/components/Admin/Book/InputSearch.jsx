@@ -10,7 +10,7 @@ function InputSearch(props) {
                 filter += `&${key}=/${value}/i`;
             }
         });
-        props.handleSearchUser(filter);
+        props.handleSearchBook(filter);
     };
 
     return (
@@ -24,7 +24,7 @@ function InputSearch(props) {
                 <Row justify={'space-around'}>
                     <Col span={7}>
                         <Form.Item
-                            name='fullName'
+                            name='mainText'
                             label='Name'
                         >
                             <Input />
@@ -32,16 +32,16 @@ function InputSearch(props) {
                     </Col>
                     <Col span={7}>
                         <Form.Item
-                            name='email'
-                            label='Email'
+                            name='author'
+                            label='Author'
                         >
                             <Input />
                         </Form.Item>
                     </Col>
                     <Col span={7}>
                         <Form.Item
-                            name='phone'
-                            label='Phone'
+                            name='category'
+                            label='Category'
                         >
                             <Input />
                         </Form.Item>

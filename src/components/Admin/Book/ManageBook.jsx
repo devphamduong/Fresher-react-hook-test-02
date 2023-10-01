@@ -1,31 +1,29 @@
 import { Button, Popconfirm, Table, message, notification } from 'antd';
 import InputSearch from './InputSearch';
 import { useEffect, useState } from 'react';
-import { deleteUser, getUserPaginate } from '../../../services/api';
+import { deleteBook, deleteUser, getBookPaginate } from '../../../services/api';
 import { BsTrash3, BsPencil } from 'react-icons/bs';
-import { CloudUploadOutlined, DownloadOutlined, PlusOutlined, ReloadOutlined, WarningOutlined } from '@ant-design/icons';
-import ModalUser from './ModalUser';
-import ModalUpLoad from './ModalUpLoad';
+import { DownloadOutlined, PlusOutlined, ReloadOutlined, WarningOutlined } from '@ant-design/icons';
 import * as XLSX from 'xlsx';
+import ModalBook from './ModalBook';
 
-function ManageUser(props) {
-    const [listUsers, setListUsers] = useState([]);
+function ManageBook(props) {
+    const [listBooks, setListBooks] = useState([]);
     const [current, setCurrent] = useState(1);
     const [pageSize, setPageSize] = useState(5);
     const [total, setTotal] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
     const [filter, setFilter] = useState('');
-    const [sortQuery, setSortQuery] = useState('');
-    const [openModalUser, setOpenModalUser] = useState(false);
-    const [openModalUpLoad, setOpenModalUpLoad] = useState(false);
-    const [userDetail, setUserDetail] = useState({});
+    const [sortQuery, setSortQuery] = useState('sort=-updatedAt');
+    const [openModalBook, setOpenModalBook] = useState(false);
+    const [bookDetail, setBookDetail] = useState({});
     const [actionModal, setActionModal] = useState('DETAIL');
 
-    const handleDeleteUser = async (id) => {
-        let res = await deleteUser(id);
+    const handleDeleteBook = async (id) => {
+        let res = await deleteBook(id);
         if (res && res.data) {
-            message.success("Deleted user successfully!");
-            await fetchUser();
+            message.success("Deleted book successfully!");
+            await fetchBook();
         } else {
             notification.error({
                 message: 'An error occurred',
@@ -37,22 +35,18 @@ function ManageUser(props) {
 
     const handleViewDetail = (data) => {
         setActionModal('DETAIL');
-        setUserDetail(data);
-        setOpenModalUser(true);
+        setBookDetail(data);
+        setOpenModalBook(true);
     };
 
-    const handleEditUser = (data) => {
+    const handleEditBook = (data) => {
         setActionModal('UPDATE');
-        setUserDetail(data);
-        setOpenModalUser(true);
+        setBookDetail(data);
+        setOpenModalBook(true);
     };
 
-    const onCloseModalUser = () => {
-        setOpenModalUser(false);
-    };
-
-    const onCloseModalUpLoad = () => {
-        setOpenModalUpLoad(false);
+    const onCloseModalBook = () => {
+        setOpenModalBook(false);
     };
 
     const columns = [
@@ -68,18 +62,30 @@ function ManageUser(props) {
             }
         },
         {
-            title: 'Full name',
-            dataIndex: 'fullName',
+            title: 'Name',
+            dataIndex: 'mainText',
             sorter: true,
         },
         {
-            title: 'Email',
-            dataIndex: 'email',
+            title: 'Category',
+            dataIndex: 'category',
             sorter: true,
         },
         {
-            title: 'Phone',
-            dataIndex: 'phone',
+            title: 'Author',
+            dataIndex: 'author',
+            sorter: true,
+        },
+        {
+            title: 'Price',
+            dataIndex: 'price',
+            render: (text, record, index) => {
+                return (
+                    <>
+                        <span>{record.price} đ</span>
+                    </>
+                );
+            },
             sorter: true,
         },
         {
@@ -90,7 +96,7 @@ function ManageUser(props) {
                         <Popconfirm
                             title="Delete the user"
                             description="Are you sure to delete this user?"
-                            onConfirm={() => handleDeleteUser(record._id)}
+                            onConfirm={() => handleDeleteBook(record._id)}
                             okText='Yes'
                             cancelText='No'
                             placement='left'
@@ -98,7 +104,7 @@ function ManageUser(props) {
                         >
                             <BsTrash3 style={{ cursor: 'pointer', color: '#dc3545', fontSize: 15 }} />
                         </Popconfirm>
-                        <BsPencil style={{ cursor: 'pointer', color: '#ffc107', fontSize: 15 }} onClick={() => handleEditUser(record)} />
+                        <BsPencil style={{ cursor: 'pointer', color: '#ffc107', fontSize: 15 }} onClick={() => handleEditBook(record)} />
                     </div >
                 );
             }
@@ -106,10 +112,10 @@ function ManageUser(props) {
     ];
 
     useEffect(() => {
-        fetchUser();
+        fetchBook();
     }, [current, pageSize, filter, sortQuery]);
 
-    const fetchUser = async () => {
+    const fetchBook = async () => {
         setIsLoading(true);
         let query = `current=${current}&pageSize=${pageSize}`;
         if (filter) {
@@ -118,9 +124,9 @@ function ManageUser(props) {
         if (sortQuery) {
             query += sortQuery;
         }
-        let res = await getUserPaginate(query);
+        let res = await getBookPaginate(query);
         if (res && res.data) {
-            setListUsers(res.data.result);
+            setListBooks(res.data.result);
             setTotal(res.data.meta.total);
         }
         setIsLoading(false);
@@ -144,29 +150,28 @@ function ManageUser(props) {
         }
     };
 
-    const handleSearchUser = async (filter) => {
+    const handleSearchBook = async (filter) => {
         if (filter) {
             setFilter(filter);
         }
     };
 
     const exportData = () => {
-        if (listUsers.length > 0) {
-            const worksheet = XLSX.utils.json_to_sheet(listUsers);
+        if (listBooks.length > 0) {
+            const worksheet = XLSX.utils.json_to_sheet(listBooks);
             const workbook = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-            XLSX.writeFile(workbook, "DataUser.xlsx");
+            XLSX.writeFile(workbook, "DataBook.xlsx");
         }
     };
 
     const renderHeader = () => {
         return (
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span>List users</span>
+                <span>List books</span>
                 <span style={{ display: 'flex', gap: 15 }}>
                     <Button type="primary" icon={<DownloadOutlined />} onClick={() => exportData()} >Export</Button>
-                    <Button type="primary" icon={<CloudUploadOutlined />} onClick={() => setOpenModalUpLoad(true)}>Import</Button>
-                    <Button type="primary" icon={<PlusOutlined />} onClick={() => { setOpenModalUser(true); setActionModal("CREATE"); }}>Add user</Button>
+                    <Button type="primary" icon={<PlusOutlined />} onClick={() => { setOpenModalBook(true); setActionModal("CREATE"); }}>Add book</Button>
                     <Button type='ghost' icon={<ReloadOutlined />} onClick={() => { setFilter(''); setSortQuery(''); }}></Button>
                 </span>
             </div>
@@ -175,11 +180,11 @@ function ManageUser(props) {
 
     return (
         <>
-            <InputSearch handleSearchUser={handleSearchUser} />
+            <InputSearch handleSearchBook={handleSearchBook} />
             <Table
                 title={renderHeader}
                 columns={columns}
-                dataSource={listUsers}
+                dataSource={listBooks}
                 onChange={onChange}
                 rowKey={'_id'}
                 loading={isLoading}
@@ -197,10 +202,9 @@ function ManageUser(props) {
                         );
                     }
                 }} />
-            <ModalUser action={actionModal} userDetail={userDetail} open={openModalUser} onClose={onCloseModalUser} fetchUser={fetchUser} />
-            <ModalUpLoad open={openModalUpLoad} onClose={onCloseModalUpLoad} fetchUser={fetchUser} />
+            <ModalBook action={actionModal} bookDetail={bookDetail} open={openModalBook} onClose={onCloseModalBook} fetchBook={fetchBook} />
         </>
     );
 }
 
-export default ManageUser;
+export default ManageBook;

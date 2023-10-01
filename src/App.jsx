@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import ErrorPage from './pages/error/error-page';
 import LoginPage from './pages/login';
 import RegisterPage from './pages/register';
-import ContactPage from './pages/contact';
 import BookPage from './pages/book';
 import {
   createBrowserRouter,
@@ -20,6 +19,7 @@ import AdminPage from './pages/admin';
 import ProtectedRoute from './components/ProtectedRoute';
 import LayoutAdmin from './components/Admin/LayoutAdmin';
 import ManageUser from './components/Admin/User/ManageUser';
+import ManageBook from './components/Admin/Book/ManageBook';
 
 const Layout = () => {
   return (
@@ -69,7 +69,7 @@ const router = createBrowserRouter([
       },
       {
         path: "book",
-        element: <BookPage />,
+        element: <ManageBook />,
       },
     ],
   },
