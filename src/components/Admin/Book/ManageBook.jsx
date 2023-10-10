@@ -14,7 +14,7 @@ function ManageBook(props) {
     const [total, setTotal] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
     const [filter, setFilter] = useState('');
-    const [sortQuery, setSortQuery] = useState('sort=-updatedAt');
+    const [sortQuery, setSortQuery] = useState('&sort=-updatedAt');
     const [openModalBook, setOpenModalBook] = useState(false);
     const [bookDetail, setBookDetail] = useState({});
     const [actionModal, setActionModal] = useState('DETAIL');
@@ -47,6 +47,7 @@ function ManageBook(props) {
 
     const onCloseModalBook = () => {
         setOpenModalBook(false);
+        setBookDetail(null);
     };
 
     const columns = [

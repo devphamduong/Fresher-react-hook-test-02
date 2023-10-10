@@ -24,8 +24,8 @@ export const accountSlice = createSlice({
         },
         getAccountAction: (state, action) => {
             state.isAuthenticated = true;
-            state.isLoading = false,
-                state.user = action.payload;
+            state.isLoading = false;
+            state.user = action.payload;
         },
         logoutAction: (state, action) => {
             localStorage.removeItem('access_token');

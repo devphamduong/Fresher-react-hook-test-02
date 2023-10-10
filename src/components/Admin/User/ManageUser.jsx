@@ -49,6 +49,7 @@ function ManageUser(props) {
 
     const onCloseModalUser = () => {
         setOpenModalUser(false);
+        setUserDetail(null);
     };
 
     const onCloseModalUpLoad = () => {

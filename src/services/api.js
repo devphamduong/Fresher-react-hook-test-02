@@ -51,3 +51,7 @@ export const updateBook = (data) => {
 export const deleteBook = (id) => {
     return axios.delete(`/api/v1/book/${id}`);
 };
+
+export const getAllBookCategories = () => {
+    return axios.get(`/api/v1/database/category`);
+};
