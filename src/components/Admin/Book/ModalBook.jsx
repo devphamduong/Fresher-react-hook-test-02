@@ -1,6 +1,6 @@
 import { Badge, Button, Col, Descriptions, Divider, Drawer, Form, Input, InputNumber, Modal, Row, Select, Upload, message, notification } from "antd";
 import moment from "moment/moment";
-import { createUser, getAllBookCategories, updateUser } from "../../../services/api";
+import { callUploadBookImg, createUser, getAllBookCategories, updateUser } from "../../../services/api";
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
@@ -35,7 +35,8 @@ function ModalBook(props) {
     const [listCategories, setListCategories] = useState([]);
     const [loadingThumbnail, setLoadingThumbnail] = useState(false);
     const [loadingSlider, setLoadingSlider] = useState(false);
-    const [imageUrl, setImageUrl] = useState('');
+    const [dataSlider, setDataSlider] = useState([]);
+    const [dataThumbnail, setDataThumbnail] = useState({});
 
     const getBase64 = (file) =>
         new Promise((resolve, reject) => {
@@ -69,6 +70,7 @@ function ModalBook(props) {
     const onFinish = async (values) => {
         setLoading(true);
         console.log(values);
+        console.log(dataSlider);
         return;
         let res;
         if (action === 'CREATE') {
@@ -146,15 +148,43 @@ function ModalBook(props) {
         if (info.file.status === 'done') {
             getBase64Img(info.file.originFileObj, (url) => {
                 type ? setLoadingSlider(false) : setLoadingThumbnail(false);
-                setImageUrl(url);
             });
         }
     };
 
-    const handleUpLoadFile = ({ file, onSuccess, onError }) => {
-        setTimeout(() => {
+    const handleUpLoadFileSlider = async ({ file, onSuccess, onError }) => {
+        let res = await callUploadBookImg(file);
+        if (res && res.data) {
+            setDataSlider((dataSlider) => [...dataSlider, {
+                name: res.data.fileUploaded,
+                uid: file.uid
+            }]);
             onSuccess('ok');
-        }, 1000);
+        } else {
+            onError('An error occurred when upload file');
+        }
+    };
+
+    const handleUpLoadFileThumbnail = async ({ file, onSuccess, onError }) => {
+        let res = await callUploadBookImg(file);
+        if (res && res.data) {
+            setDataThumbnail({
+                name: res.data.fileUploaded,
+                uid: file.uid
+            });
+            onSuccess('ok');
+        } else {
+            onError('An error occurred when upload file');
+        }
+    };
+
+    const handleRemoveFile = (file, type) => {
+        if (type === 'thumbnail') {
+            setDataThumbnail({});
+        } else {
+            const newSlider = dataSlider.filter(s => s.uid !== file.uid);
+            setDataSlider(newSlider);
+        }
     };
 
     return (
@@ -281,8 +311,10 @@ function ModalBook(props) {
                                         maxCount={1}
                                         multiple={false}
                                         onChange={handleChange}
-                                        customRequest={handleUpLoadFile}
-                                        beforeUpload={beforeUpload}>
+                                        customRequest={handleUpLoadFileThumbnail}
+                                        beforeUpload={beforeUpload}
+                                        onPreview={handlePreview}
+                                        onRemove={(file) => handleRemoveFile(file, 'thumbnail')}>
                                         <div>
                                             {loadingThumbnail ? <LoadingOutlined /> : <PlusOutlined />}
                                             <div style={{ marginTop: 8 }}>Upload</div>
@@ -300,8 +332,10 @@ function ModalBook(props) {
                                         listType="picture-card"
                                         multiple
                                         onChange={(info) => handleChange(info, 'slider')}
-                                        customRequest={handleUpLoadFile}
-                                        beforeUpload={beforeUpload}>
+                                        customRequest={handleUpLoadFileSlider}
+                                        beforeUpload={beforeUpload}
+                                        onPreview={handlePreview}
+                                        onRemove={(file) => handleRemoveFile(file, 'slider')}>
                                         <div>
                                             {loadingSlider ? <LoadingOutlined /> : <PlusOutlined />}
                                             <div style={{ marginTop: 8 }}>Upload</div>
@@ -309,6 +343,9 @@ function ModalBook(props) {
                                     </Upload>
                                 </Form.Item>
                             </Col>
+                            <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancelPreview}>
+                                <img alt="example" style={{ width: '100%' }} src={previewImage} />
+                            </Modal>
                         </Row>
                     </Form>
                 </Modal>
