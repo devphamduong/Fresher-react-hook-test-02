@@ -1,6 +1,6 @@
 import { Badge, Button, Col, Descriptions, Divider, Drawer, Form, Input, InputNumber, Modal, Row, Select, Upload, message, notification } from "antd";
 import moment from "moment/moment";
-import { callUploadBookImg, createUser, getAllBookCategories, updateUser } from "../../../services/api";
+import { callUploadBookImg, createBook, createUser, getAllBookCategories, updateUser } from "../../../services/api";
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
@@ -69,13 +69,15 @@ function ModalBook(props) {
 
     const onFinish = async (values) => {
         setLoading(true);
-        console.log(values);
-        console.log(dataSlider);
-        return;
+        values.thumbnail = dataThumbnail.name;
+        let arrSlider = [];
+        dataSlider.map(item => {
+            arrSlider.push(item.name);
+        });
+        values.slider = [...arrSlider];
         let res;
         if (action === 'CREATE') {
-            res = await createUser(values);
-
+            res = await createBook(values);
         } else if (action === 'UPDATE') {
             res = await updateUser(values);
         }
