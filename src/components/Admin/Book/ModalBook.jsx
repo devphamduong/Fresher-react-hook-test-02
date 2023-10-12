@@ -37,6 +37,7 @@ function ModalBook(props) {
     const [loadingSlider, setLoadingSlider] = useState(false);
     const [dataSlider, setDataSlider] = useState([]);
     const [dataThumbnail, setDataThumbnail] = useState({});
+    const [initForm, setInitForm] = useState({});
 
     const getBase64 = (file) =>
         new Promise((resolve, reject) => {
@@ -69,15 +70,19 @@ function ModalBook(props) {
 
     const onFinish = async (values) => {
         setLoading(true);
-        values.thumbnail = dataThumbnail.name;
-        let arrSlider = [];
-        dataSlider.map(item => {
-            arrSlider.push(item.name);
-        });
-        values.slider = [...arrSlider];
+        let data = {
+            thumbnail: dataThumbnail.name,
+            slider: dataSlider.map(item => item.name),
+            mainText: values.mainText,
+            author: values.author,
+            price: values.price,
+            sold: values.sold,
+            quantity: values.quantity,
+            category: values.category
+        };
         let res;
         if (action === 'CREATE') {
-            res = await createBook(values);
+            res = await createBook(data);
         } else if (action === 'UPDATE') {
             res = await updateUser(values);
         }
@@ -85,6 +90,8 @@ function ModalBook(props) {
             action === 'CREATE' ? message.success("Created book successfully!") : message.success("Updated user successfully!");
             onClose();
             formAdd.resetFields();
+            setDataThumbnail({});
+            setDataSlider([]);
             await fetchBook();
         } else {
             notification.error({
@@ -122,12 +129,47 @@ function ModalBook(props) {
             }
         }
         if (action === 'UPDATE') {
-            formUpdate.setFieldsValue(bookDetail);
+            if (bookDetail) {
+                const arrThumbnail = [
+                    {
+                        uid: uuidv4(),
+                        name: bookDetail.thumbnail,
+                        status: 'done',
+                        url: `${import.meta.env.VITE_BACKEND_URL}/images/book/${bookDetail.thumbnail}`
+                    }
+                ];
+                const arrSlider = bookDetail?.slider?.map(item => {
+                    return {
+                        uid: uuidv4(),
+                        name: item,
+                        status: 'done',
+                        url: `${import.meta.env.VITE_BACKEND_URL}/images/book/${item}`
+                    };
+                });
+                const init = {
+                    id: bookDetail._id,
+                    mainText: bookDetail.mainText,
+                    author: bookDetail.author,
+                    price: bookDetail.price,
+                    category: bookDetail.category,
+                    quantity: bookDetail.quantity,
+                    sold: bookDetail.sold,
+                    thumbnail: { fileList: arrThumbnail },
+                    slider: { fileList: arrSlider }
+                };
+                setInitForm(init);
+                setDataThumbnail(arrThumbnail);
+                setDataSlider(arrSlider);
+                formUpdate.setFieldsValue(init);
+            }
         }
+        return () => {
+            formUpdate.resetFields();
+        };
     }, [bookDetail]);
 
     useEffect(() => {
-        if (action === 'CREATE') {
+        if (action === 'CREATE' || action === 'UPDATE') {
             fetchAllCategories();
         }
     }, [action]);
@@ -354,38 +396,132 @@ function ModalBook(props) {
             }
             {action === 'UPDATE'
                 &&
-                <Modal title="Update book" open={open} onOk={() => formUpdate.submit()} centered onCancel={handleCancel} okText="Save changes" confirmLoading={loading}>
+                <Modal title="Update book" open={open} onOk={() => formUpdate.submit()} centered onCancel={handleCancel} okText="Save changes" confirmLoading={loading} width={'50vw'}>
                     <Form form={formUpdate} name="basic" layout="vertical" onFinish={onFinish}>
-                        <Form.Item
-                            label="Id"
-                            name="_id"
-                            rules={[{ required: true, message: 'Please input your id!' }]}
-                            hidden
-                        >
-                            <Input defaultValue={bookDetail?.fullName} />
-                        </Form.Item>
-                        <Form.Item
-                            label="Full Name"
-                            name="fullName"
-                            rules={[{ required: true, message: 'Please input your full name!' }]}
-                        >
-                            <Input defaultValue={bookDetail?.fullName} />
-                        </Form.Item>
-                        <Form.Item
-                            label="Email"
-                            name="email"
-                        >
-                            <Input defaultValue={bookDetail?.email} disabled />
-                        </Form.Item>
-                        <Form.Item
-                            label="Phone"
-                            name="phone"
-                            rules={[{ required: true, message: 'Please input your phone!' }]}
-                        >
-                            <Input defaultValue={bookDetail?.phone} />
-                        </Form.Item>
+                        <Row justify={'space-around'}>
+                            <Col span={11}>
+                                <Form.Item
+                                    label="Name"
+                                    name="mainText"
+                                    rules={[{ required: true, message: 'Please input book name!' }]}
+                                >
+                                    <Input />
+                                </Form.Item>
+                            </Col>
+                            <Col span={11}>
+                                <Form.Item
+                                    label="Author"
+                                    name="author"
+                                    rules={[{ required: true, message: 'Please input author!' }]}
+                                >
+                                    <Input />
+                                </Form.Item>
+                            </Col>
+                            <Col span={5}>
+                                <Form.Item
+                                    label="Price"
+                                    name="price"
+                                    rules={[{ required: true, message: 'Please input price!' }]}>
+                                    <InputNumber
+                                        min={1}
+                                        addonAfter="VND"
+                                        formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} />
+                                </Form.Item>
+                            </Col>
+                            <Col span={5}>
+                                <Form.Item
+                                    label="Category"
+                                    name="category"
+                                    rules={[{ required: true, message: 'Please select category!' }]}
+                                >
+                                    <Select
+                                        style={{ width: '100%' }}
+                                        showSearch
+                                        allowClear
+                                        optionFilterProp="children"
+                                        filterOption={filterOption}
+                                        options={
+                                            listCategories && listCategories.length > 0 && listCategories.map(item => {
+                                                return (
+                                                    {
+                                                        value: item,
+                                                        label: item,
+                                                    }
+                                                );
+                                            })
+                                        }
+                                    />
+                                </Form.Item>
+                            </Col>
+                            <Col span={5}>
+                                <Form.Item
+                                    label="Quantity"
+                                    name="quantity"
+                                    rules={[{ required: true, message: 'Please input quantity!' }]}
+                                >
+                                    <InputNumber min={1} style={{ width: '100%' }} />
+                                </Form.Item>
+                            </Col>
+                            <Col span={5}>
+                                <Form.Item
+                                    label="Sold"
+                                    name="sold"
+                                    initialValue={0}
+                                >
+                                    <InputNumber min={1} style={{ width: '100%' }} />
+                                </Form.Item>
+                            </Col>
+                            <Col span={11}>
+                                <Form.Item
+                                    label="Thumbnail"
+                                    name="thumbnail"
+                                    rules={[{ required: true, message: 'Please upload thumbnail!' }]}
+                                >
+                                    <Upload
+                                        listType="picture-card"
+                                        defaultFileList={initForm?.thumbnail?.fileList ?? []}
+                                        maxCount={1}
+                                        multiple={false}
+                                        onChange={handleChange}
+                                        customRequest={handleUpLoadFileThumbnail}
+                                        beforeUpload={beforeUpload}
+                                        onPreview={handlePreview}
+                                        onRemove={(file) => handleRemoveFile(file, 'thumbnail')}>
+                                        <div>
+                                            {loadingThumbnail ? <LoadingOutlined /> : <PlusOutlined />}
+                                            <div style={{ marginTop: 8 }}>Upload</div>
+                                        </div>
+                                    </Upload>
+                                </Form.Item>
+                            </Col>
+                            <Col span={11}>
+                                <Form.Item
+                                    label="Slider"
+                                    name="slider"
+                                    rules={[{ required: true, message: 'Please upload at least one slider!' }]}
+                                >
+                                    <Upload
+                                        listType="picture-card"
+                                        defaultFileList={initForm?.slider?.fileList ?? []}
+                                        multiple
+                                        onChange={(info) => handleChange(info, 'slider')}
+                                        customRequest={handleUpLoadFileSlider}
+                                        beforeUpload={beforeUpload}
+                                        onPreview={handlePreview}
+                                        onRemove={(file) => handleRemoveFile(file, 'slider')}>
+                                        <div>
+                                            {loadingSlider ? <LoadingOutlined /> : <PlusOutlined />}
+                                            <div style={{ marginTop: 8 }}>Upload</div>
+                                        </div>
+                                    </Upload>
+                                </Form.Item>
+                            </Col>
+                            <Modal open={previewOpen} title={previewTitle} footer={null} onCancel={handleCancelPreview}>
+                                <img alt="example" style={{ width: '100%' }} src={previewImage} />
+                            </Modal>
+                        </Row>
                     </Form>
-                </Modal>
+                </Modal >
             }
         </>
     );
