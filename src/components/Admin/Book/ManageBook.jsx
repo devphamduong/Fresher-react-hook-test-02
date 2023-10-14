@@ -95,8 +95,8 @@ function ManageBook(props) {
                 return (
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
                         <Popconfirm
-                            title="Delete the user"
-                            description="Are you sure to delete this user?"
+                            title="Delete the book"
+                            description="Are you sure to delete this book?"
                             onConfirm={() => handleDeleteBook(record._id)}
                             okText='Yes'
                             cancelText='No'

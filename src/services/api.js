@@ -44,8 +44,8 @@ export const createBook = (data) => {
     return axios.post('/api/v1/book', { ...data });
 };
 
-export const updateBook = (data) => {
-    return axios.put('/api/v1/book', { ...data });
+export const updateBook = (id, data) => {
+    return axios.put(`/api/v1/book/${id}`, { ...data });
 };
 
 export const deleteBook = (id) => {

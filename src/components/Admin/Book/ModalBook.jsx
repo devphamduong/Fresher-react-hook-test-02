@@ -1,6 +1,6 @@
 import { Badge, Button, Col, Descriptions, Divider, Drawer, Form, Input, InputNumber, Modal, Row, Select, Upload, message, notification } from "antd";
 import moment from "moment/moment";
-import { callUploadBookImg, createBook, createUser, getAllBookCategories, updateUser } from "../../../services/api";
+import { callUploadBookImg, createBook, createUser, getAllBookCategories, updateBook, updateUser } from "../../../services/api";
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
@@ -84,7 +84,7 @@ function ModalBook(props) {
         if (action === 'CREATE') {
             res = await createBook(data);
         } else if (action === 'UPDATE') {
-            res = await updateUser(values);
+            res = await updateBook(initForm.id, data);
         }
         if (res && res.data) {
             action === 'CREATE' ? message.success("Created book successfully!") : message.success("Updated user successfully!");
