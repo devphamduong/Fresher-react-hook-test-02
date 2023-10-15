@@ -1,9 +1,39 @@
 import { FilterOutlined, ReloadOutlined } from "@ant-design/icons";
 import { Button, Card, Checkbox, Col, Divider, Form, InputNumber, Pagination, Rate, Row, Space, Tabs } from "antd";
 import './Home.scss';
+import { getAllBookCategories, getBookPaginate } from "../../services/api";
+import { useEffect, useState } from "react";
 
 function Home() {
     const [form] = Form.useForm();
+    const [listCategories, setListCategories] = useState([]);
+    const [listBooks, setListBooks] = useState([]);
+    const [current, setCurrent] = useState(1);
+    const [total, setTotal] = useState(0);
+
+    useEffect(() => {
+        fetchAllCategories();
+    }, []);
+
+    useEffect(() => {
+        fetchBook();
+    }, [current]);
+
+    const fetchAllCategories = async () => {
+        let res = await getAllBookCategories();
+        if (res && res.data.length > 0) {
+            setListCategories(res.data);
+        }
+    };
+
+    const fetchBook = async () => {
+        let query = `current=${current}&pageSize=4`;
+        let res = await getBookPaginate(query);
+        if (res && res.data) {
+            setListBooks(res.data.result);
+            setTotal(res.data.meta.total);
+        }
+    };
 
     const onChangeTab = (key) => {
         console.log(key);
@@ -17,10 +47,17 @@ function Home() {
         console.log(values);
     };
 
+    const onChange = (page) => {
+        if (page && page !== current) {
+            console.log(page);
+            setCurrent(page);
+        }
+    };
+
     return (
         <div className="home-container">
-            <Row className="home-content">
-                <Col md={4} xs={4} style={{ padding: '0 10px' }}>
+            <Row className="home-content" justify={'space-evenly'}>
+                <Col md={4} xs={4} style={{ padding: '10px 20px', background: 'white', borderRadius: 8 }}>
                     <Space direction="vertical" style={{ width: '100%' }}>
                         <Row justify={'space-between'} align={'middle'}>
                             <Col>
@@ -37,21 +74,14 @@ function Home() {
                             <Form.Item name="categories" label="Categories" style={{ margin: 0 }}>
                                 <Checkbox.Group style={{ width: '100%' }}>
                                     <Row>
-                                        <Col span={24}>
-                                            <Checkbox value="A">A</Checkbox>
-                                        </Col>
-                                        <Col span={24}>
-                                            <Checkbox value="B">B</Checkbox>
-                                        </Col>
-                                        <Col span={24}>
-                                            <Checkbox value="C">C</Checkbox>
-                                        </Col>
-                                        <Col span={24}>
-                                            <Checkbox value="D">D</Checkbox>
-                                        </Col>
-                                        <Col span={24}>
-                                            <Checkbox value="E">E</Checkbox>
-                                        </Col>
+                                        {listCategories && listCategories.length > 0 &&
+                                            listCategories.map((item, index) => {
+                                                return (
+                                                    <Col span={24} key={`category-${item}-${index}`}>
+                                                        <Checkbox value={item}>{item}</Checkbox>
+                                                    </Col>
+                                                );
+                                            })}
                                     </Row>
                                 </Checkbox.Group>
                             </Form.Item>
@@ -85,7 +115,7 @@ function Home() {
                         </Form>
                     </Space>
                 </Col>
-                <Col sm={20} style={{ padding: '0 10px' }}>
+                <Col sm={19} style={{ padding: '10px 20px', background: 'white', borderRadius: 8 }}>
                     <Row>
                         <Tabs defaultActiveKey="1" style={{ width: '100%' }}
                             items={[
@@ -112,64 +142,34 @@ function Home() {
                             ]}
                             onChange={onChangeTab} />
                     </Row>
-                    <Row style={{ flexWrap: 'wrap', gap: 15 }}>
-                        <Col>
-                            <Card
-                                hoverable
-                                style={{ width: 240 }}
-                                cover={<img alt="example" src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png" />}
-                            >
-                                <Card.Meta
-                                    title="Cộc"
-                                    description={
-                                        <>
-                                            <div className="price" style={{ color: 'black' }}>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(70000)}</div>
-                                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                <Rate className="rate" defaultValue={5} disabled={true} style={{ fontSize: 15 }} />
-                                                <span className="sold" style={{ marginLeft: 5, color: 'black' }}>1k sold</span></div>
-                                        </>
-                                    } />
-                            </Card>
-                        </Col>
-                        <Col>
-                            <Card
-                                hoverable
-                                style={{ width: 240 }}
-                                cover={<img alt="example" src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png" />}
-                            >
-                                <Card.Meta
-                                    title="Cộc"
-                                    description={
-                                        <>
-                                            <div className="price" style={{ color: 'black' }}>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(70000)}</div>
-                                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                <Rate className="rate" defaultValue={5} disabled={true} style={{ fontSize: 15 }} />
-                                                <span className="sold" style={{ marginLeft: 5, color: 'black' }}>1k sold</span></div>
-                                        </>
-                                    } />
-                            </Card>
-                        </Col>
-                        <Col>
-                            <Card
-                                hoverable
-                                style={{ width: 240 }}
-                                cover={<img alt="example" src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png" />}
-                            >
-                                <Card.Meta
-                                    title="Cộc"
-                                    description={
-                                        <>
-                                            <div className="price" style={{ color: 'black' }}>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(70000)}</div>
-                                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                <Rate className="rate" defaultValue={5} disabled={true} style={{ fontSize: 15 }} />
-                                                <span className="sold" style={{ marginLeft: 5, color: 'black' }}>1k sold</span></div>
-                                        </>
-                                    } />
-                            </Card>
-                        </Col>
+                    <Row style={{ flexWrap: 'wrap' }} justify={'space-evenly'}>
+                        {listBooks && listBooks.length > 0 &&
+                            listBooks.map((item, index) => {
+                                return (
+                                    <Col key={`book-${index}`}>
+                                        <Card
+                                            hoverable
+                                            style={{ width: 240 }}
+                                            cover={<img alt="example" src={`${import.meta.env.VITE_BACKEND_URL}/images/book/${item.thumbnail}`} />}
+                                        >
+                                            <Card.Meta
+                                                title={item.mainText}
+                                                className={`title ${item.mainText.length > 40 ? 'ellipsis' : ''}`}
+                                                description={
+                                                    <>
+                                                        <div className="price" style={{ color: 'black' }}>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price)}</div>
+                                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                            <Rate className="rate" defaultValue={5} disabled={true} style={{ fontSize: 15 }} />
+                                                            <span className="sold" style={{ marginLeft: 5, color: 'black' }}>{item.sold} sold</span></div>
+                                                    </>
+                                                } />
+                                        </Card>
+                                    </Col>
+                                );
+                            })}
                     </Row>
                     <Divider />
-                    <Pagination style={{ textAlign: 'center' }} defaultCurrent={6} total={500} />
+                    <Pagination style={{ textAlign: 'center' }} current={current} total={total} pageSize={4} showSizeChanger={false} onChange={onChange} />
                 </Col>
             </Row>
         </div>
