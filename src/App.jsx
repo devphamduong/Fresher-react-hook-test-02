@@ -25,7 +25,7 @@ const Layout = () => {
   return (
     <div className='layout-app'>
       <Header />
-      <Outlet />
+      <div style={{ margin: '0 30px' }}><Outlet /></div>
       <Footer />
     </div>
   );
