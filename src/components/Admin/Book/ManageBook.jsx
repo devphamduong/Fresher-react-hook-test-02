@@ -1,7 +1,7 @@
 import { Button, Popconfirm, Table, message, notification } from 'antd';
 import InputSearch from './InputSearch';
 import { useEffect, useState } from 'react';
-import { deleteBook, deleteUser, getBookPaginate } from '../../../services/api';
+import { deleteBook, getBookPaginate } from '../../../services/api';
 import { BsTrash3, BsPencil } from 'react-icons/bs';
 import { DownloadOutlined, PlusOutlined, ReloadOutlined, WarningOutlined } from '@ant-design/icons';
 import * as XLSX from 'xlsx';

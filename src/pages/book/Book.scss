@@ -1,0 +1,57 @@
+.image-gallery-image,
+.image-gallery-thumbnail-image {
+    cursor: pointer;
+}
+
+.custom {
+    height         : 32px;
+    width          : 32px;
+    //border       : 1px solid rgba(0, 0, 0, .09);
+    border         : 1px solid black;
+    border-radius  : 2px;
+    background     : transparent;
+}
+
+.custom-button:first-child {
+    border-top-right-radius   : 0;
+    border-bottom-right-radius: 0;
+}
+
+.custom-button:last-child {
+    border-top-left-radius   : 0;
+    border-bottom-left-radius: 0;
+}
+
+.custom-input {
+    height       : 30.4px;
+    width        : 50px;
+    font-size    : 16px;
+    font-weight  : 400;
+    padding      : 0;
+    border-left  : 0;
+    border-right : 0;
+    text-align   : center;
+    border-radius: 0;
+}
+
+.button {
+    border-radius: 2px;
+    box-shadow   : rgba(0, 0, 0, 0.09) 0px 1px 1px 0px;
+    padding      : 15px 30px;
+}
+
+.button-add {
+    background-color: #ff57221a;
+    color           : #ee4d2d;
+    border          : 1px solid #ee4d2d;
+}
+
+.button-buy {
+    background: rgb(238, 77, 45);
+    color     : rgb(255, 255, 255);
+    border    : 1px solid rgb(238, 77, 45);
+}
+
+.active {
+    border: 10px solid red;
+}
