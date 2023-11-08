@@ -1,21 +1,27 @@
 import { useLocation } from 'react-router-dom';
 import "react-image-gallery/styles/scss/image-gallery.scss";
 import ImageGallery from "react-image-gallery";
-import { Col, Image, Modal, Row } from 'antd';
+import { Button, Col, Image, Modal, Row } from 'antd';
 import './Book.scss';
 import { useEffect, useRef, useState } from 'react';
 import BookSkeleton from './BookSkeleton';
 import { getBookDetail } from '../../services/api';
+import { useDispatch, useSelector } from 'react-redux';
+import { addToCartAction } from '../../redux/order/orderSlice';
+import { useImmer } from 'use-immer';
 
 function BookPage() {
     let location = useLocation();
     let params = new URLSearchParams(location.search);
     const id = params?.get('id');
+    const dispatch = useDispatch();
+    const carts = useSelector(state => state.orders.carts);
 
     const [isOpenModal, setIsOpenModal] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [activeIndex, setActiveIndex] = useState(0);
     const [dataBook, setDataBook] = useState({});
+    const [quantity, setQuantity] = useState(1);
 
     const refGallery = useRef();
     const refGalleryModal = useRef();
@@ -71,6 +77,22 @@ function BookPage() {
 
     const images = dataBook?.images ?? [];
 
+    const handleChangeQuantity = (event, min, max, type) => {
+        if (event && !isNaN(event.target.value) && +event.target.value <= max) {
+            setQuantity(+event.target.value);
+        }
+        if (type === 'decrease' && quantity > min) {
+            setQuantity(+quantity - 1);
+        }
+        if (type === 'increase' && quantity < max) {
+            setQuantity(+quantity + 1);
+        }
+    };
+
+    const handleAddToCart = (quantity, book) => {
+        dispatch(addToCartAction({ quantity, _id: book._id, detail: book }));
+    };
+
     return (
         <>
             {dataBook && dataBook._id ?
@@ -91,14 +113,16 @@ function BookPage() {
                         <div style={{ display: 'flex', alignItems: 'center', marginBottom: 10 }}>
                             <span style={{ marginRight: 40 }}>Quantity</span>
                             <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <button className='custom custom-button'>-</button>
-                                <input type="text" value={1} className='custom custom-input' />
-                                <button style={{ marginRight: 10 }} className='custom custom-button'>+</button>
+                                <Button className='custom custom-button' style={{ display: 'flex', justifyContent: 'center' }} onClick={() => handleChangeQuantity(null, 1, dataBook.quantity, 'decrease')}><span>-</span></Button>
+                                <input type="text" value={quantity} onChange={(event) => handleChangeQuantity(event, 1, dataBook.quantity)} className='custom custom-input' min={1} max={dataBook.quantity} />
+                                <Button style={{ marginRight: 10, display: 'flex', justifyContent: 'center' }} className='custom custom-button' onClick={() => handleChangeQuantity(null, 1, dataBook.quantity, 'increase')}><span>+</span></Button>
                             </div>
                             <span>{dataBook.quantity} available</span>
                         </div>
-                        <button style={{ marginRight: 10 }} className='button button-add'>Add To Cart</button>
-                        <button className='button button-buy'>Buy Now</button>
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <Button style={{ marginRight: 10, display: 'flex', alignItems: 'center' }} className='button button-add' onClick={() => handleAddToCart(quantity, dataBook)}>Add To Cart</Button>
+                            <Button className='button button-buy' style={{ display: 'flex', alignItems: 'center' }}>Buy Now</Button>
+                        </div>
                     </Col>
                 </Row>
                 :
