@@ -11,6 +11,7 @@ import { FaReact } from 'react-icons/fa';
 function Header(props) {
     const isAuthenticated = useSelector(state => state.account.isAuthenticated);
     const user = useSelector(state => state.account.user);
+    const carts = useSelector(state => state.orders.carts);
     const [open, setOpen] = useState(false);
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -104,7 +105,7 @@ function Header(props) {
             <Col span={4} md={6}>
                 <Row className="others">
                     <Col span={24} md={12} className="cart">
-                        <Badge count={5}>
+                        <Badge count={carts?.length ?? 0}>
                             <ShoppingCartOutlined className='cart-icon' />
                         </Badge>
                     </Col>

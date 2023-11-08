@@ -18,7 +18,7 @@ export const orderSlice = createSlice({
             let foundCart = carts.findIndex(c => c._id === item._id);
             if (foundCart > -1) {
                 carts[foundCart].quantity += +item.quantity;
-                if (cart[foundCart].quantity > item.quantity) {
+                if (carts[foundCart].quantity > item.quantity) {
                     carts[foundCart].quantity = +item.quantity;
                 }
             } else {

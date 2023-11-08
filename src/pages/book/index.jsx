@@ -1,21 +1,19 @@
 import { useLocation } from 'react-router-dom';
 import "react-image-gallery/styles/scss/image-gallery.scss";
 import ImageGallery from "react-image-gallery";
-import { Button, Col, Image, Modal, Row } from 'antd';
+import { Button, Col, Image, Modal, Row, message } from 'antd';
 import './Book.scss';
 import { useEffect, useRef, useState } from 'react';
 import BookSkeleton from './BookSkeleton';
 import { getBookDetail } from '../../services/api';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { addToCartAction } from '../../redux/order/orderSlice';
-import { useImmer } from 'use-immer';
 
 function BookPage() {
     let location = useLocation();
     let params = new URLSearchParams(location.search);
     const id = params?.get('id');
     const dispatch = useDispatch();
-    const carts = useSelector(state => state.orders.carts);
 
     const [isOpenModal, setIsOpenModal] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -91,6 +89,7 @@ function BookPage() {
 
     const handleAddToCart = (quantity, book) => {
         dispatch(addToCartAction({ quantity, _id: book._id, detail: book }));
+        message.success("Product is added to cart");
     };
 
     return (
