@@ -91,7 +91,7 @@ const LayoutAdmin = () => {
                             fontSize: '16px'
                         }}
                     />
-                    <Dropdown menu={{ items: itemsDrop }} trigger={['click']}>
+                    <Dropdown menu={{ items: itemsDrop }} trigger={['click']} arrow>
                         <a onClick={(e) => e.preventDefault()}>
                             <Space>
                                 <Avatar src={urlAvatar} />{user.fullName}

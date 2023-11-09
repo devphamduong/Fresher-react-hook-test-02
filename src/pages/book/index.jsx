@@ -1,7 +1,7 @@
 import { useLocation } from 'react-router-dom';
 import "react-image-gallery/styles/scss/image-gallery.scss";
 import ImageGallery from "react-image-gallery";
-import { Button, Col, Image, Modal, Row, message } from 'antd';
+import { Button, Col, Image, Modal, Row } from 'antd';
 import './Book.scss';
 import { useEffect, useRef, useState } from 'react';
 import BookSkeleton from './BookSkeleton';
@@ -89,7 +89,6 @@ function BookPage() {
 
     const handleAddToCart = (quantity, book) => {
         dispatch(addToCartAction({ quantity, _id: book._id, detail: book }));
-        message.success("Product is added to cart");
     };
 
     return (

@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { message } from 'antd';
 
 const initialState = {
     carts: [
@@ -17,18 +18,19 @@ export const orderSlice = createSlice({
             const item = action.payload;
             let foundCart = carts.findIndex(c => c._id === item._id);
             if (foundCart > -1) {
-                carts[foundCart].quantity += +item.quantity;
-                if (carts[foundCart].quantity > item.quantity) {
-                    carts[foundCart].quantity = +item.quantity;
+                carts[foundCart].quantity += item.quantity;
+                if (carts[foundCart].quantity > item.detail.quantity) {
+                    carts[foundCart].quantity = +item.detail.quantity;
                 }
             } else {
                 carts.push({
                     quantity: +item.quantity,
                     _id: item._id,
-                    detail: item
+                    detail: item.detail
                 });
             }
             state.carts = carts;
+            message.success("Product is added to Cart");
         },
     },
     extraReducers: (builder) => {
