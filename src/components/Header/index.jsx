@@ -41,36 +41,6 @@ function Header(props) {
                 key: '1',
             }];
 
-    const itemCarts =
-        carts?.length === 0 ?
-            [{
-                key: 'No Product',
-                label:
-                    <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
-                        No Product
-                    </a>
-            }] :
-            carts.map((item, index) => {
-                return (
-                    {
-                        key: item._id,
-                        label: (
-                            <Row align={'middle'}>
-                                <Col span={4}>
-                                    <img src={`${import.meta.env.VITE_BACKEND_URL}/images/book/${item.detail.thumbnail}`} alt="" width={50} height={50} />
-                                </Col>
-                                <Col span={16}>
-                                    <Typography.Text ellipsis>{item.detail.mainText}</Typography.Text>
-                                </Col>
-                                <Col span={4} style={{ textAlign: 'end' }}>
-                                    <div style={{ color: 'red' }}>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.detail.price)}</div>
-                                </Col>
-                            </Row>
-                        )
-                    }
-                );
-            });
-
     const onClose = () => {
         setOpen(false);
     };
@@ -136,24 +106,27 @@ function Header(props) {
                     <Col span={24} md={12} className="cart">
                         <Badge count={carts?.length ?? 0} showZero>
                             <Popover content={
-                                <>
-                                    {carts.map((item, index) => {
-                                        return (
-                                            <Row align={'middle'}>
-                                                <Col span={4}>
-                                                    <img src={`${import.meta.env.VITE_BACKEND_URL}/images/book/${item.detail.thumbnail}`} alt="" width={50} height={50} />
-                                                </Col>
-                                                <Col span={16}>
-                                                    <Typography.Text ellipsis>{item.detail.mainText}</Typography.Text>
-                                                </Col>
-                                                <Col span={4} style={{ textAlign: 'end' }}>
-                                                    <div style={{ color: 'red' }}>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.detail.price ?? 0)}</div>
-                                                </Col>
-                                            </Row>
-                                        );
-                                    })}
-                                    <div style={{ display: 'flex', justifyContent: 'end' }}><Button className='button button-buy' style={{ display: 'flex', alignItems: 'center' }}>Buy Now</Button></div>
-                                </>
+                                carts?.length > 0 ?
+                                    <>
+                                        {carts.map((item, index) => {
+                                            return (
+                                                <Row align={'middle'}>
+                                                    <Col span={4}>
+                                                        <img src={`${import.meta.env.VITE_BACKEND_URL}/images/book/${item.detail.thumbnail}`} alt="" width={50} height={50} />
+                                                    </Col>
+                                                    <Col span={16}>
+                                                        <Typography.Text ellipsis>{item.detail.mainText}</Typography.Text>
+                                                    </Col>
+                                                    <Col span={4} style={{ textAlign: 'end' }}>
+                                                        <div style={{ color: 'red' }}>{new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.detail.price ?? 0)}</div>
+                                                    </Col>
+                                                </Row>
+                                            );
+                                        })}
+                                        <div style={{ display: 'flex', justifyContent: 'end' }}><Button className='button button-buy' style={{ display: 'flex', alignItems: 'center' }} onClick={() => navigate('/order')}>View Cart</Button></div>
+                                    </>
+                                    :
+                                    <>No Product</>
                             } title="Recent added product" placement="bottom">
                                 <ShoppingCartOutlined className='cart-icon' />
                             </Popover>

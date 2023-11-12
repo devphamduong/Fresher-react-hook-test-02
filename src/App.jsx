@@ -3,6 +3,7 @@ import ErrorPage from './pages/error/error-page';
 import LoginPage from './pages/login';
 import RegisterPage from './pages/register';
 import BookPage from './pages/book';
+import OrderPage from './pages/order';
 import {
   createBrowserRouter,
   RouterProvider, Outlet
@@ -41,6 +42,10 @@ const router = createBrowserRouter([
       {
         path: "book/:slug",
         element: <BookPage />,
+      },
+      {
+        path: "order",
+        element: <OrderPage />,
       },
     ],
   },

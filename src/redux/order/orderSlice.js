@@ -18,9 +18,17 @@ export const orderSlice = createSlice({
             const item = action.payload;
             let foundCart = carts.findIndex(c => c._id === item._id);
             if (foundCart > -1) {
-                carts[foundCart].quantity += item.quantity;
-                if (carts[foundCart].quantity > item.detail.quantity) {
-                    carts[foundCart].quantity = +item.detail.quantity;
+                if (item.action !== 'cart') {
+                    carts[foundCart].quantity += item.quantity;
+                    if (+carts[foundCart].quantity > +item.detail.quantity) {
+                        carts[foundCart].quantity = +item.detail.quantity;
+                    }
+                } else {
+                    if (+carts[foundCart].quantity > +item.detail.quantity) {
+                        carts[foundCart].quantity = +item.detail.quantity;
+                    } else {
+                        carts[foundCart].quantity = item.quantity;
+                    }
                 }
             } else {
                 carts.push({
@@ -30,7 +38,12 @@ export const orderSlice = createSlice({
                 });
             }
             state.carts = carts;
-            message.success("Product is added to Cart");
+            if (item.action !== 'cart') message.success("Product is added to Cart");
+        },
+        removeProductAction: (state, action) => {
+            const id = action.payload;
+            state.carts = state.carts.filter(item => item._id !== id);
+            message.success("Product is removed from Cart");
         },
     },
     extraReducers: (builder) => {
@@ -38,6 +51,6 @@ export const orderSlice = createSlice({
     },
 });
 
-export const { addToCartAction } = orderSlice.actions;
+export const { addToCartAction, removeProductAction } = orderSlice.actions;
 
 export default orderSlice.reducer;
