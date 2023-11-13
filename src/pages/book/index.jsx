@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import "react-image-gallery/styles/scss/image-gallery.scss";
 import ImageGallery from "react-image-gallery";
 import { Button, Col, Image, Modal, Row } from 'antd';
@@ -14,6 +14,7 @@ function BookPage() {
     let params = new URLSearchParams(location.search);
     const id = params?.get('id');
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const [isOpenModal, setIsOpenModal] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -87,8 +88,13 @@ function BookPage() {
         }
     };
 
-    const handleAddToCart = (quantity, book) => {
-        dispatch(addToCartAction({ quantity, _id: book._id, detail: book }));
+    const handleAddToCart = (quantity, book, type) => {
+        if (type === 'cart') {
+            dispatch(addToCartAction({ quantity, _id: book._id, detail: book }));
+        } else {
+            dispatch(addToCartAction({ quantity, _id: book._id, detail: book }));
+            navigate('/order');
+        }
     };
 
     return (
@@ -118,8 +124,8 @@ function BookPage() {
                             <span>{dataBook.quantity} available</span>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center' }}>
-                            <Button style={{ marginRight: 10, display: 'flex', alignItems: 'center' }} className='button button-add' onClick={() => handleAddToCart(quantity, dataBook)}>Add To Cart</Button>
-                            <Button className='button button-buy' style={{ display: 'flex', alignItems: 'center' }}>Buy Now</Button>
+                            <Button style={{ marginRight: 10, display: 'flex', alignItems: 'center' }} className='button button-add' onClick={() => handleAddToCart(quantity, dataBook, 'cart')}>Add To Cart</Button>
+                            <Button className='button button-buy' style={{ display: 'flex', alignItems: 'center' }} onClick={() => handleAddToCart(quantity, dataBook, 'now')}>Buy Now</Button>
                         </div>
                     </Col>
                 </Row>

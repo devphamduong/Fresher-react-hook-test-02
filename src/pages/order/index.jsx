@@ -1,9 +1,11 @@
-import { Button, Col, Divider, Form, Input, InputNumber, Radio, Result, Row, Steps, Typography, message } from "antd";
+import { Button, Col, Divider, Empty, Form, Input, InputNumber, Radio, Result, Row, Steps, Typography, message } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { DeleteOutlined, SmileOutlined } from '@ant-design/icons';
-import { addToCartAction, removeProductAction } from '../../redux/order/orderSlice';
+import { addToCartAction, clearCart, removeProductAction } from '../../redux/order/orderSlice';
 import { useEffect, useState } from "react";
 import './Order.scss';
+import { createOrder } from "../../services/api";
+import { useNavigate } from "react-router-dom";
 
 function OrderPage(props) {
     const carts = useSelector(state => state.orders.carts);
@@ -12,9 +14,26 @@ function OrderPage(props) {
     const [totalPrice, setTotalPrice] = useState(carts.reduce((total, item) => total + (item.quantity * item.detail.price), 0));
     const [current, setCurrent] = useState(0);
     const [form] = Form.useForm();
+    const navigate = useNavigate();
 
-    const onFinish = (values) => {
+    const onFinish = async (values) => {
         next();
+        let data = {
+            name: values.receiver,
+            address: values.address,
+            phone: values.phone,
+            totalPrice: totalPrice,
+            detail: carts.map(item => {
+                return {
+                    bookName: item.detail.mainText,
+                    quantity: item.quantity,
+                    _id: item._id
+                };
+            })
+
+        };
+        await createOrder(data);
+        dispatch(clearCart());
     };
 
     useEffect(() => {
@@ -90,7 +109,7 @@ function OrderPage(props) {
                                             {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.detail.price ?? 0)}
                                         </Col>
                                         <Col span={3}>
-                                            Quantity: {item.detail.quantity}
+                                            Quantity: {item.quantity}
                                         </Col>
                                         <Col span={6} style={{ textAlign: 'center' }}>
                                             Total: {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.quantity * item.detail.price ?? 0)}
@@ -143,7 +162,7 @@ function OrderPage(props) {
                         icon={<SmileOutlined />}
                         title="The order has been placed successfully!"
                         extra={
-                            <Button type="primary" key="console">
+                            <Button type="primary" key="console" onClick={() => navigate('/order-history')}>
                                 View order history
                             </Button>
                         }
@@ -181,13 +200,22 @@ function OrderPage(props) {
     return (
         <>
             <div style={{ padding: '0 40px' }} className="order-container">
-                {carts.length > 0 ?
-                    <Row justify={'space-between'} gutter={[16, 10]}>
-                        <Col span={24}><Steps style={{ padding: '10px 20px', backgroundColor: 'white', borderRadius: 5 }} current={current} items={items} status={current === steps.length - 1 ? "finish" : "finish"} /></Col>
-                        {steps[current].content}
-                    </Row>
-                    :
-                    <div style={{ textAlign: 'center' }}>No Product</div>}
+                <Row justify={'space-between'} gutter={[16, 10]}>
+                    <Col span={24}><Steps style={{ padding: '10px 20px', backgroundColor: 'white', borderRadius: 5 }} current={current} items={items} status={current === steps.length - 1 ? "finish" : "finish"} /></Col>
+                    {current === 0 && carts.length > 0 &&
+                        steps[0].content
+                    }
+                    {
+                        current === 0 && carts.length === 0 &&
+                        <Col span={24}><Empty description="There are no products in the cart" /></Col>
+                    }
+                    {current === 1 &&
+                        steps[1].content
+                    }
+                    {current === 2 &&
+                        steps[2].content
+                    }
+                </Row>
             </div >
         </>
     );

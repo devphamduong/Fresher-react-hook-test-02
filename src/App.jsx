@@ -21,6 +21,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import LayoutAdmin from './components/Admin/LayoutAdmin';
 import ManageUser from './components/Admin/User/ManageUser';
 import ManageBook from './components/Admin/Book/ManageBook';
+import OrderHistoryPage from './pages/order/history';
 
 const Layout = () => {
   return (
@@ -46,6 +47,10 @@ const router = createBrowserRouter([
       {
         path: "order",
         element: <OrderPage />,
+      },
+      {
+        path: "order-history",
+        element: <OrderHistoryPage />,
       },
     ],
   },

@@ -45,12 +45,15 @@ export const orderSlice = createSlice({
             state.carts = state.carts.filter(item => item._id !== id);
             message.success("Product is removed from Cart");
         },
+        clearCart: (state, action) => {
+            state.carts = [];
+        }
     },
     extraReducers: (builder) => {
 
     },
 });
 
-export const { addToCartAction, removeProductAction } = orderSlice.actions;
+export const { addToCartAction, removeProductAction, clearCart } = orderSlice.actions;
 
 export default orderSlice.reducer;

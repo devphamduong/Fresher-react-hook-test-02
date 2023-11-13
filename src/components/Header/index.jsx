@@ -28,8 +28,12 @@ function Header(props) {
                 key: '1',
             },
             {
+                label: <div onClick={() => navigate('/order-history')}>Order history</div>,
+                key: '2'
+            },
+            {
                 label: <div onClick={() => handleLogout()}>Log out</div>,
-                key: '2',
+                key: '3',
             }]
             :
             [{
@@ -37,8 +41,12 @@ function Header(props) {
                 key: '0',
             },
             {
+                label: <div onClick={() => navigate('/order-history')}>Order history</div>,
+                key: '1'
+            },
+            {
                 label: <div onClick={() => handleLogout()}>Log out</div>,
-                key: '1',
+                key: '2',
             }];
 
     const onClose = () => {
@@ -87,10 +95,10 @@ function Header(props) {
             </Col>
             <Col span={0} md={6} className="logo">
                 <Row justify={'center'}>
-                    <Col>
+                    <Col style={{ cursor: 'pointer' }} onClick={() => navigate('/')}>
                         <FaReact className='logo-icon' />
                     </Col>
-                    <Col>
+                    <Col style={{ cursor: 'pointer' }} onClick={() => navigate('/')}>
                         <span className='logo-name'>DuongPC</span>
                     </Col>
                 </Row>
@@ -126,9 +134,9 @@ function Header(props) {
                                         <div style={{ display: 'flex', justifyContent: 'end' }}><Button className='button button-buy' style={{ display: 'flex', alignItems: 'center' }} onClick={() => navigate('/order')}>View Cart</Button></div>
                                     </>
                                     :
-                                    <>No Product</>
+                                    <>There are no products in the cart</>
                             } title="Recent added product" placement="bottom">
-                                <ShoppingCartOutlined className='cart-icon' />
+                                <ShoppingCartOutlined className='cart-icon' style={{ cursor: 'pointer' }} />
                             </Popover>
                         </Badge>
                     </Col>
