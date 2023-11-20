@@ -9,6 +9,7 @@ const initialState = {
         fullName: "",
         role: "",
         avatar: "",
+        tempAvatar: "",
         id: ""
     }
 };
@@ -36,8 +37,18 @@ export const accountSlice = createSlice({
                 fullName: "",
                 role: "",
                 avatar: "",
+                tempAvatar: "",
                 id: ""
             };
+        },
+        updateUserAvatar: (state, action) => {
+            state.user.tempAvatar = action.payload;
+        },
+        updateUserInfo: (state, action) => {
+            let { avatar, phone, fullName } = action.payload;
+            state.user.avatar = avatar;
+            state.user.phone = phone;
+            state.user.fullName = fullName;
         },
     },
     extraReducers: (builder) => {
@@ -45,6 +56,6 @@ export const accountSlice = createSlice({
     },
 });
 
-export const { loginAction, getAccountAction, logoutAction } = accountSlice.actions;
+export const { loginAction, getAccountAction, logoutAction, updateUserAvatar, updateUserInfo } = accountSlice.actions;
 
 export default accountSlice.reducer;

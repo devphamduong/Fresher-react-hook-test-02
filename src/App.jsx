@@ -22,6 +22,7 @@ import LayoutAdmin from './components/Admin/LayoutAdmin';
 import ManageUser from './components/Admin/User/ManageUser';
 import ManageBook from './components/Admin/Book/ManageBook';
 import OrderHistoryPage from './pages/order/history';
+import ManageOrder from './components/Admin/Order/ManageOrder';
 
 const Layout = () => {
   return (
@@ -80,6 +81,10 @@ const router = createBrowserRouter([
       {
         path: "book",
         element: <ManageBook />,
+      },
+      {
+        path: "order",
+        element: <ManageOrder />,
       },
     ],
   },

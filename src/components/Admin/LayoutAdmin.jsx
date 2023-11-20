@@ -1,4 +1,4 @@
-import { AppstoreOutlined, BookOutlined, MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined } from "@ant-design/icons";
+import { AppstoreOutlined, BookOutlined, MenuFoldOutlined, MenuUnfoldOutlined, ShoppingCartOutlined, UserOutlined } from "@ant-design/icons";
 import { Avatar, Button, Dropdown, Layout, Menu, Space, message } from "antd";
 const { Header, Sider, Content, Footer } = Layout;
 import { useState } from "react";
@@ -36,6 +36,11 @@ const LayoutAdmin = () => {
             label: <Link to={'/admin/book'}>Manage books</Link>,
             key: 'manageBooks',
             icon: <BookOutlined />
+        },
+        {
+            label: <Link to={'/admin/order'}>Manage orders</Link>,
+            key: 'manageOrders',
+            icon: <ShoppingCartOutlined />
         },
     ];
 
@@ -78,6 +83,7 @@ const LayoutAdmin = () => {
                 <Menu
                     defaultSelectedKeys={['dashboard']}
                     mode="inline"
+                    style={{ borderInlineEnd: 'none' }}
                     items={itemsNav}
                 />
             </Sider>

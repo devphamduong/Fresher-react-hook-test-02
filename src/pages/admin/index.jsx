@@ -1,21 +1,41 @@
 import { UploadOutlined, UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
-import { Layout, Menu } from 'antd';
+import { Card, Layout, Menu } from 'antd';
 
-const { Sider } = Layout;
 import React, { useState } from "react";
+import CountUp from 'react-countup';
+import { Col, Row, Statistic } from 'antd';
+import { useEffect } from 'react';
+import { getDashboard } from '../../services/api';
 
 function AdminPage() {
-    const [collapsed, setCollapsed] = useState(false);
-    const [open, setOpen] = useState(false);
+    const [dashboard, setDashboard] = useState();
 
-    const onClose = () => {
-        setOpen(false);
+    useEffect(() => {
+        fetchDashboard();
+    }, []);
+
+    const fetchDashboard = async () => {
+        let res = await getDashboard();
+        if (res && res.data) {
+            setDashboard(res.data);
+        }
     };
 
-    return (
-        <>
+    const formatter = (value) => <CountUp end={value} separator="," />;
 
-        </>
+    return (
+        <Row gutter={16}>
+            <Col span={5}>
+                <Card bordered={false}>
+                    <Statistic title="Total Users" value={dashboard?.countUser} formatter={formatter} />
+                </Card>
+            </Col>
+            <Col span={5}>
+                <Card bordered={false}>
+                    <Statistic title="Total Orders" value={dashboard?.countOrder} formatter={formatter} />
+                </Card>
+            </Col>
+        </Row>
     );
 }
 

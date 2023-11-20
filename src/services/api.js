@@ -81,3 +81,33 @@ export const createOrder = (data) => {
 export const getOrderHistory = () => {
     return axios.get(`/api/v1/history`);
 };
+
+export const uploadAvatar = (fileImg) => {
+    const bodyFormData = new FormData();
+    bodyFormData.append('fileImg', fileImg);
+    return axios({
+        method: 'post',
+        url: '/api/v1/file/upload',
+        data: bodyFormData,
+        headers: {
+            "Content-Type": "multipart/form-data",
+            "upload-type": "avatar"
+        },
+    });
+};
+
+export const updateInfo = (data) => {
+    return axios.put(`/api/v1/user`, { ...data });
+};
+
+export const changePassword = (data) => {
+    return axios.post(`/api/v1/user/change-password`, { ...data });
+};
+
+export const getDashboard = () => {
+    return axios.get(`/api/v1/database/dashboard`);
+};
+
+export const getOrderPaginate = (query) => {
+    return axios.get(`/api/v1/order?${query}`);
+};
