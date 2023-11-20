@@ -7,22 +7,24 @@ import { Outlet, Link, useNavigate } from "react-router-dom";
 import './LayoutAdmin.scss';
 import { logout } from "../../services/api";
 import { logoutAction } from "../../redux/account/accountSlice";
+import { useEffect } from "react";
 
 const LayoutAdmin = () => {
     const user = useSelector(state => state.account.user);
     const [collapsed, setCollapsed] = useState(false);
+    const [activeMenu, setActiveMenu] = useState('/admin');
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const itemsNav = [
         {
             label: <Link to={'/admin'}>Dashboard</Link>,
-            key: 'dashboard',
+            key: '/admin',
             icon: <AppstoreOutlined />
         },
         {
             label: <span>Manage users</span>,
-            key: 'manageUsers',
+            key: '/admin/user',
             icon: <UserOutlined />,
             children: [
                 {
@@ -34,12 +36,12 @@ const LayoutAdmin = () => {
         },
         {
             label: <Link to={'/admin/book'}>Manage books</Link>,
-            key: 'manageBooks',
+            key: '/admin/book',
             icon: <BookOutlined />
         },
         {
             label: <Link to={'/admin/order'}>Manage orders</Link>,
-            key: 'manageOrders',
+            key: '/admin/order',
             icon: <ShoppingCartOutlined />
         },
     ];
@@ -68,6 +70,10 @@ const LayoutAdmin = () => {
         }
     };
 
+    useEffect(() => {
+        setActiveMenu(window.location.pathname);
+    }, [window.location.pathname]);
+
     const urlAvatar = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${user.avatar}`;
 
     return (
@@ -81,10 +87,11 @@ const LayoutAdmin = () => {
             >
                 <div style={{ height: 32, margin: 16, textAlign: 'center' }} >Admin</div>
                 <Menu
-                    defaultSelectedKeys={['dashboard']}
+                    selectedKeys={[activeMenu]}
                     mode="inline"
                     style={{ borderInlineEnd: 'none' }}
                     items={itemsNav}
+                    onClick={(e) => { setActiveMenu(e.key); }}
                 />
             </Sider>
             <Layout>

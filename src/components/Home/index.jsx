@@ -3,9 +3,10 @@ import { Button, Card, Checkbox, Col, Divider, Form, InputNumber, Pagination, Ra
 import './Home.scss';
 import { getAllBookCategories, getBookPaginate } from "../../services/api";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 
 function Home() {
+    const [searchTerm, setSearchTerm] = useOutletContext();
     const [form] = Form.useForm();
     const [listCategories, setListCategories] = useState([]);
     const [listBooks, setListBooks] = useState([]);
@@ -23,7 +24,7 @@ function Home() {
 
     useEffect(() => {
         fetchBook();
-    }, [current, pageSize, filter, sortQuery]);
+    }, [current, pageSize, filter, sortQuery, searchTerm]);
 
     const fetchAllCategories = async () => {
         let res = await getAllBookCategories();
@@ -40,6 +41,9 @@ function Home() {
         }
         if (sortQuery) {
             query += sortQuery;
+        }
+        if (searchTerm) {
+            query += `&mainText=/${searchTerm}/i`;
         }
         let res = await getBookPaginate(query);
         if (res && res.data) {
@@ -136,7 +140,7 @@ function Home() {
                             <Col>
                                 <FilterOutlined style={{ color: '#4c96ff' }} /><span style={{ fontSize: 15, fontWeight: 'bold' }}> Filter</span>
                             </Col>
-                            <Col><Button type='ghost' icon={<ReloadOutlined />} onClick={() => { form.resetFields(); setFilter(''); }}></Button></Col>
+                            <Col><Button type='ghost' icon={<ReloadOutlined />} onClick={() => { form.resetFields(); setFilter(''); setSearchTerm(''); }}></Button></Col>
                         </Row>
                         <Form
                             form={form}

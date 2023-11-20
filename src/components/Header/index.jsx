@@ -172,6 +172,8 @@ function Header(props) {
                 </Col>
                 <Col span={16} md={12}>
                     <Input className='search'
+                        value={props.searchTerm}
+                        onChange={(event) => props.setSearchTerm(event.target.value)}
                         placeholder="What do you have in mind?"
                         prefix={<SearchOutlined className='search-icon' />}
                     />

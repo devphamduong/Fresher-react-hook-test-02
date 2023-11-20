@@ -23,12 +23,15 @@ import ManageUser from './components/Admin/User/ManageUser';
 import ManageBook from './components/Admin/Book/ManageBook';
 import OrderHistoryPage from './pages/order/history';
 import ManageOrder from './components/Admin/Order/ManageOrder';
+import { useState } from 'react';
 
 const Layout = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+
   return (
     <div className='layout-app'>
-      <Header />
-      <div style={{ padding: '20px 0', background: '#f5f5f5' }}><Outlet /></div>
+      <Header searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+      <div style={{ padding: '20px 0', background: '#f5f5f5' }}><Outlet context={[searchTerm, setSearchTerm]} /></div>
       <Footer />
     </div>
   );
@@ -47,11 +50,17 @@ const router = createBrowserRouter([
       },
       {
         path: "order",
-        element: <OrderPage />,
+        element:
+          <ProtectedRoute>
+            <OrderPage />
+          </ProtectedRoute>
       },
       {
         path: "order-history",
-        element: <OrderHistoryPage />,
+        element:
+          <ProtectedRoute>
+            <OrderHistoryPage />
+          </ProtectedRoute>
       },
     ],
   },
